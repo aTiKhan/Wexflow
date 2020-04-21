@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Wexflow.Server")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Akram El Assas")]
+[assembly: AssemblyCompany("Wexflow")]
 [assembly: AssemblyProduct("Wexflow.Server")]
 [assembly: AssemblyCopyright("Copyright © Akram El Assas 2019")]
 [assembly: AssemblyTrademark("")]

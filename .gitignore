@@ -42,6 +42,9 @@ setup/Wexflow.app/
 !setup/dotnet/Wexflow.Scripts.RavenDB/*.exe.config
 !setup/dotnet/Wexflow.Scripts.SQLServer/*.exe.config
 !setup/dotnet/Wexflow.Scripts.MySQL/*.exe.config
+!setup/dotnet/Wexflow.Scripts.Firebird/*.exe.config
+!setup/dotnet/Wexflow.Scripts.Oracle/*.exe.config
+!setup/dotnet/Wexflow.Scripts.MariaDB/*.exe.config
 *.nupkg
 Wexflow-coverage-dotnet.xml
 Wexflow-coverage-dotnet-core.xml

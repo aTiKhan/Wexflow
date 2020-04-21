@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Wexflow.Core.Db;
 
-namespace Wexflow.Core.CosmosDB
+namespace Wexflow.Core.Db.CosmosDB
 {
     public class Db : Core.Db.Db
     {
@@ -411,6 +410,19 @@ namespace Wexflow.Core.CosmosDB
                         client.CreateDocumentQuery<Entry>(
                             UriFactory.CreateDocumentCollectionUri(_databaseName, Core.Db.Entry.DocumentName))
                         .Where(e => e.WorkflowId == workflowId)
+                        .AsEnumerable().ToArray()
+                        .FirstOrDefault();
+            }
+        }
+
+        public override Core.Db.Entry GetEntry(int workflowId, Guid jobId)
+        {
+            using (var client = new DocumentClient(new Uri(_endpointUrl), _authorizationKey))
+            {
+                return
+                        client.CreateDocumentQuery<Entry>(
+                            UriFactory.CreateDocumentCollectionUri(_databaseName, Core.Db.Entry.DocumentName))
+                        .Where(e => e.WorkflowId == workflowId && e.JobId == jobId.ToString())
                         .AsEnumerable().ToArray()
                         .FirstOrDefault();
             }
@@ -846,7 +858,7 @@ namespace Wexflow.Core.CosmosDB
             }
         }
 
-        public override void IncrementDisapprovedCount()
+        public override void IncrementRejectedCount()
         {
             using (var client = new DocumentClient(new Uri(_endpointUrl), _authorizationKey))
             {
@@ -855,7 +867,7 @@ namespace Wexflow.Core.CosmosDB
                 .AsEnumerable().ToArray()
                 .First();
 
-                statusCount.DisapprovedCount++;
+                statusCount.RejectedCount++;
 
                 _helper.ReplaceDocument(_databaseName, Core.Db.StatusCount.DocumentName, statusCount, statusCount.Id);
             }
@@ -966,6 +978,7 @@ namespace Wexflow.Core.CosmosDB
                         Status = entry.Status,
                         StatusDate = entry.StatusDate,
                         WorkflowId = entry.WorkflowId,
+                        JobId = entry.JobId,
                         Logs = entry.Logs
                     });
             }
@@ -1055,6 +1068,7 @@ namespace Wexflow.Core.CosmosDB
                     Status = entry.Status,
                     StatusDate = entry.StatusDate,
                     WorkflowId = entry.WorkflowId,
+                    JobId = entry.JobId,
                     Logs = entry.Logs
                 },
                 id);
@@ -1187,5 +1201,8 @@ namespace Wexflow.Core.CosmosDB
             }
         }
 
+        public override void Dispose()
+        {
+        }
     }
 }

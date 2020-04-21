@@ -4,7 +4,8 @@
     var uri = Common.trimEnd(Settings.Uri, "/");
     var lnkManager = document.getElementById("lnk-manager");
     var lnkDesigner = document.getElementById("lnk-designer");
-    var lnkApproval = document.getElementById("lnk-approval");
+    //var lnkEditor = document.getElementById("lnk-editor");
+    //var lnkApproval = document.getElementById("lnk-approval");
     var lnkUsers = document.getElementById("lnk-users");
     var lnkProfiles = document.getElementById("lnk-profiles");
     var divUsers = document.getElementById("users");
@@ -72,7 +73,8 @@
                     divUsers.style.display = "block";
                     lnkManager.style.display = "inline";
                     lnkDesigner.style.display = "inline";
-                    lnkApproval.style.display = "inline";
+                    //lnkEditor.style.display = "inline";
+                    //lnkApproval.style.display = "inline";
                     lnkUsers.style.display = "inline";
 
                     if (u.UserProfile === 0) {
@@ -138,9 +140,9 @@
                 var table = "<table id='wf-users-table' class='table'>"
                     + "<thead class='thead-dark'>"
                     + "<tr>"
-                    + "<th id='th-id'>Id</th>"
-                    + "<th id='th-username'>Username&nbsp;&nbsp;🔺</th>"
-                    + "<th>Profile</th>"
+                    + "<th id='th-id' class='userid'>Id</th>"
+                    + "<th id='th-username' class='username'>Username&nbsp;&nbsp;🔺</th>"
+                    + "<th class='userprofile'>Profile</th>"
                     + "</tr>"
                     + "</thead>"
                     + "<tbody>"
@@ -149,6 +151,22 @@
                     + "</table>";
 
                 divUsersTable.innerHTML = table;
+
+                var usersTable = document.getElementById("wf-users-table");
+
+                usersTable.getElementsByTagName("tbody")[0].style.height = (divUsersTable.offsetHeight - 35) + "px";
+
+                var rows = usersTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+                if (rows.length > 0) {
+                    var hrow = usersTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+                    hrow.querySelector(".username").style.width = rows[0].querySelector(".username").offsetWidth + "px";
+                    hrow.querySelector(".userprofile").style.width = rows[0].querySelector(".userprofile").offsetWidth + "px";
+                }
+
+                var profiles = usersTable.querySelectorAll(".userprofile");
+                for (i = 0; i < profiles.length; i++) {
+                    profiles[i].style.width = usersTable.offsetWidth - 60 + "px";
+                }
 
                 thUsername = document.getElementById("th-username");
                 thUsername.onclick = function () {
@@ -166,8 +184,6 @@
                     thUsername.innerHTML = "Username&nbsp;&nbsp;🔻";
                 }
 
-                var usersTable = document.getElementById("wf-users-table");
-
                 // set selectedUsernameTd
                 var selected = document.getElementsByClassName("selected");
                 if (selected.length > 0) {
@@ -176,7 +192,6 @@
                     selectedUserProfileTd = selectedTr.getElementsByClassName("userprofile")[0];
                 }
 
-                var rows = (usersTable.getElementsByTagName("tbody")[0]).getElementsByTagName("tr");
                 for (var j = 0; j < rows.length; j++) {
 
                     var row = rows[j];

@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using Wexflow.Core.PostgreSQL;
+using Wexflow.Core.Db.PostgreSQL;
 
 namespace Wexflow.Scripts.PostgreSQL
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

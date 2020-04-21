@@ -62,11 +62,45 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="approval.html" />
+    <Content Include="assets\action.svg" />
+    <Content Include="assets\actionblue.svg" />
+    <Content Include="assets\actionorange.svg" />
+    <Content Include="assets\arrow.svg" />
+    <Content Include="assets\checkoff.svg" />
+    <Content Include="assets\checkon.svg" />
+    <Content Include="assets\close.svg" />
+    <Content Include="assets\closeleft.png" />
+    <Content Include="assets\closeleft.svg" />
+    <Content Include="assets\database.svg" />
+    <Content Include="assets\databaseorange.svg" />
+    <Content Include="assets\dropdown.svg" />
+    <Content Include="assets\error.svg" />
+    <Content Include="assets\errorblue.svg" />
+    <Content Include="assets\errorred.svg" />
+    <Content Include="assets\eye.svg" />
+    <Content Include="assets\eyeblue.svg" />
+    <Content Include="assets\grabme.svg" />
+    <Content Include="assets\heart.svg" />
+    <Content Include="assets\doc.png" />
+    <Content Include="assets\log.svg" />
+    <Content Include="assets\logred.svg" />
+    <Content Include="assets\meta.png" />
+    <Content Include="assets\more.svg" />
+    <Content Include="assets\openleft.png" />
+    <Content Include="assets\search.svg" />
+    <Content Include="assets\tile.png" />
+    <Content Include="assets\time.svg" />
+    <Content Include="assets\timeblue.svg" />
+    <Content Include="assets\twitter.svg" />
+    <Content Include="assets\twitterorange.svg" />
     <Content Include="css\approval.min.css" />
     <Content Include="css\bootstrap-toggle.min.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\dashboard.min.css" />
     <Content Include="css\designer.min.css" />
+    <Content Include="css\editor.min.css" />
+    <Content Include="css\designer.css" />
+    <Content Include="css\flowy.css" />
     <Content Include="css\forgot-password.css" />
     <Content Include="css\forgot-password.min.css" />
     <Content Include="css\history.css" />
@@ -81,24 +115,32 @@
     <Content Include="css\profiles.min.css" />
     <Content Include="css\users.css" />
     <Content Include="css\users.min.css" />
+    <Content Include="designer.html" />
     <Content Include="forgot-password.html" />
     <Content Include="images\delete.png" />
     <Content Include="images\logo.png" />
     <Content Include="js\ace.js" />
     <Content Include="js\approval.min.js" />
     <Content Include="js\approval.js" />
+    <Content Include="js\blockly_compressed.js" />
+    <Content Include="js\blocks_compressed.js" />
     <Content Include="js\bootstrap-toggle.min.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\dashboard.min.js" />
     <Content Include="js\designer.min.js" />
+    <Content Include="js\editor.min.js" />
+    <Content Include="js\designer.js" />
+    <Content Include="js\en.js" />
     <Content Include="js\ext-keybinding_menu.js" />
     <Content Include="js\ext-prompt.js" />
     <Content Include="js\ext-searchbox.js" />
     <Content Include="js\ext-settings_menu.js" />
+    <Content Include="js\flowy.js" />
     <Content Include="js\forgot-password.js" />
     <Content Include="js\forgot-password.min.js" />
     <Content Include="js\history.min.js" />
     <Content Include="js\jquery.toast.min.js" />
+    <Content Include="js\lodash.min.js" />
     <Content Include="js\manager.min.js" />
     <Content Include="js\mode-json.js" />
     <Content Include="js\mode-xml.js" />
@@ -143,13 +185,13 @@
     <Content Include="js\uglify-login.bat" />
     <Content Include="js\uglify-dashboard.bat" />
     <Content Include="js\uglify-manager.bat" />
-    <Content Include="js\uglify-designer.bat" />
+    <Content Include="js\uglify-editor.bat" />
     <Content Include="js\uglify-history.bat" />
     <Content Include="js\uglify-all.bat" />
     <Content Include="css\uglify-login.bat" />
     <Content Include="css\uglify-dashboard.bat" />
     <Content Include="css\uglify-manager.bat" />
-    <Content Include="css\uglify-designer.bat" />
+    <Content Include="css\uglify-editor.bat" />
     <Content Include="css\uglify-history.bat" />
     <Content Include="css\uglify-all.bat" />
     <Content Include="js\uglify-forgot-password.bat" />
@@ -161,6 +203,8 @@
     <Content Include="css\uglify-profiles.bat" />
     <Content Include="js\uglify-profiles.bat" />
     <Content Include="js\jBox.all.min.js" />
+    <Content Include="js\uglify-designer.bat" />
+    <Content Include="css\uglify-designer.bat" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -170,7 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\dashboard.css" />
-    <Content Include="css\designer.css" />
+    <Content Include="css\editor.css" />
     <Content Include="css\images\ui-icons_444444_256x240.png" />
     <Content Include="css\images\ui-icons_555555_256x240.png" />
     <Content Include="css\images\ui-icons_777620_256x240.png" />
@@ -182,7 +226,7 @@
     <Content Include="css\manager.css" />
     <Content Include="css\vs2015.css" />
     <Content Include="dashboard.html" />
-    <Content Include="designer.html" />
+    <Content Include="editor.html" />
     <Content Include="history.html" />
     <Content Include="images\disapproved-small.png" />
     <Content Include="images\disapproved.png" />
@@ -203,7 +247,7 @@
     <Content Include="js\common.js" />
     <Content Include="js\cytoscape-dagre.min.js" />
     <Content Include="js\dashboard.js" />
-    <Content Include="js\designer.js" />
+    <Content Include="js\editor.js" />
     <Content Include="js\highlight.pack.js" />
     <Content Include="js\history.js" />
     <Content Include="js\jquery.min.js" />

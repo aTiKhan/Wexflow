@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
@@ -110,9 +111,9 @@ namespace Wexflow.Core
         /// </summary>
         public bool IsWaitingForApproval { get; set; }
         /// <summary>
-        /// Shows whether this workflow is disapproved or not.
+        /// Shows whether this workflow is rejected or not.
         /// </summary>
-        public bool IsDisapproved { get; private set; }
+        public bool IsRejected { get; private set; }
         /// <summary>
         /// Shows whether this workflow is running or not.
         /// </summary>
@@ -201,6 +202,10 @@ namespace Wexflow.Core
         /// Log messages.
         /// </summary>
         public List<string> Logs { get; private set; }
+        /// <summary>
+        /// Started on date time.
+        /// </summary>
+        public DateTime StartedOn { get; private set; }
 
         private bool _stopCalled;
         private Queue<Job> _jobsQueue;
@@ -253,6 +258,7 @@ namespace Wexflow.Core
             Hashtable = new Hashtable();
             GlobalVariables = globalVariables;
             RestVariables = new List<Variable>();
+            StartedOn = DateTime.MinValue;
             Check();
             LoadLocalVariables();
             Load(Xml);
@@ -504,19 +510,29 @@ namespace Wexflow.Core
                         Type type = null;
                         var name = xAttribute.Value;
                         var assemblyName = "Wexflow.Tasks." + name;
+                        var typeFullName = "Wexflow.Tasks." + name + "." + name;
                         var typeName = "Wexflow.Tasks." + name + "." + name + ", " + assemblyName;
 
                         // Try to load from root
                         type = Type.GetType(typeName);
+                        if (type == null)
+                        {
+                            var binPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                            var assemblyPath = Path.Combine(binPath, assemblyName + ".dll");
+                            if (File.Exists(assemblyPath))
+                            {
+                                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+                                type = assembly.GetType(typeFullName);
+                            }
+                        }
 
                         if (type == null) // Try to load from Tasks folder
                         {
-                            var taskAssemblyFile = Path.Combine(TasksFolder, assemblyName + ".dll");
-                            if (File.Exists(taskAssemblyFile))
+                            var assemblyPath = Path.Combine(TasksFolder, assemblyName + ".dll");
+                            if (File.Exists(assemblyPath))
                             {
-                                var taskAssembly = Assembly.LoadFile(taskAssemblyFile);
-                                var typeFullName = "Wexflow.Tasks." + name + "." + name;
-                                type = taskAssembly.GetType(typeFullName);
+                                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+                                type = assembly.GetType(typeFullName);
                             }
                         }
 
@@ -584,20 +600,20 @@ namespace Wexflow.Core
                         onError = new GraphEvent(onErrorNodes);
                     }
 
-                    // OnDisapproved
-                    GraphEvent onDisapproved = null;
-                    var xOnDispproved = xExectionGraph.XPathSelectElement("wf:OnRejected", XmlNamespaceManager);
-                    if (xOnDispproved != null)
+                    // OnRejected
+                    GraphEvent onRejected = null;
+                    var xOnRejected = xExectionGraph.XPathSelectElement("wf:OnRejected", XmlNamespaceManager);
+                    if (xOnRejected != null)
                     {
-                        var onDisapproveNodes = GetTaskNodes(xOnDispproved);
-                        CheckStartupNode(onDisapproveNodes, "Startup node with parentId=-1 not found in OnError execution graph.");
-                        CheckParallelTasks(onDisapproveNodes, "Parallel tasks execution detected in OnError execution graph.");
-                        CheckInfiniteLoop(onDisapproveNodes, "Infinite loop detected in OnError execution graph.");
-                        onDisapproved = new GraphEvent(onDisapproveNodes);
+                        var onRejectedNodes = GetTaskNodes(xOnRejected);
+                        CheckStartupNode(onRejectedNodes, "Startup node with parentId=-1 not found in OnError execution graph.");
+                        CheckParallelTasks(onRejectedNodes, "Parallel tasks execution detected in OnError execution graph.");
+                        CheckInfiniteLoop(onRejectedNodes, "Infinite loop detected in OnError execution graph.");
+                        onRejected = new GraphEvent(onRejectedNodes);
                     }
 
 
-                    ExecutionGraph = new Graph(taskNodes, onSuccess, onWarning, onError, onDisapproved);
+                    ExecutionGraph = new Graph(taskNodes, onSuccess, onWarning, onError, onRejected);
                 }
             }
         }
@@ -895,48 +911,53 @@ namespace Wexflow.Core
             var dest = Parse(Xml);
             Load(dest);
 
-            Database.IncrementRunningCount();
-
-            var entry = Database.GetEntry(Id);
-            if (entry == null)
-            {
-                var newEntry = new Entry
-                {
-                    WorkflowId = Id,
-                    Name = Name,
-                    LaunchType = ((Db.LaunchType)(int)LaunchType),
-                    Description = Description,
-                    Status = Db.Status.Running,
-                    StatusDate = DateTime.Now
-                };
-                Database.InsertEntry(newEntry);
-            }
-            else
-            {
-                entry.Status = Db.Status.Running;
-                entry.StatusDate = DateTime.Now;
-                Database.UpdateEntry(entry.GetDbId(), entry);
-            }
-            entry = Database.GetEntry(Id);
-
-            _historyEntry = new HistoryEntry
-            {
-                WorkflowId = Id,
-                Name = Name,
-                LaunchType = ((Db.LaunchType)(int)LaunchType),
-                Description = Description
-            };
-
             var thread = new Thread(() =>
                 {
+                    var msg = string.Format("{0} Workflow started - Instance Id: {1}", LogTag, InstanceId);
+                    Logger.Info(msg);
+                    Logs.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture) + "  INFO - " + msg);
+
+                    Database.IncrementRunningCount();
+
+                    var entry = Database.GetEntry(Id, InstanceId);
+                    if (entry == null)
+                    {
+                        var newEntry = new Entry
+                        {
+                            WorkflowId = Id,
+                            JobId = InstanceId.ToString(),
+                            Name = Name,
+                            LaunchType = ((Db.LaunchType)(int)LaunchType),
+                            Description = Description,
+                            Status = Db.Status.Running,
+                            StatusDate = DateTime.Now,
+                            Logs = string.Join("\r\n", Logs)
+                        };
+                        Database.InsertEntry(newEntry);
+                    }
+                    else
+                    {
+                        entry.Status = Db.Status.Running;
+                        entry.StatusDate = DateTime.Now;
+                        entry.Logs = string.Join("\r\n", Logs);
+                        Database.UpdateEntry(entry.GetDbId(), entry);
+                    }
+                    entry = Database.GetEntry(Id, InstanceId);
+
+                    _historyEntry = new HistoryEntry
+                    {
+                        WorkflowId = Id,
+                        Name = Name,
+                        LaunchType = ((Db.LaunchType)(int)LaunchType),
+                        Description = Description
+                    };
+
                     try
                     {
+                        StartedOn = DateTime.Now;
                         _stopCalled = false;
                         IsRunning = true;
-                        IsDisapproved = false;
-                        var msg = string.Format("{0} Workflow started.", LogTag);
-                        Logger.Info(msg);
-                        Logs.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture) + "  INFO - " + msg);
+                        IsRejected = false;
 
                         // Create the temp folder
                         CreateTempFolder();
@@ -949,15 +970,15 @@ namespace Wexflow.Core
                             bool error = true;
                             RunSequentialTasks(Tasks, ref success, ref warning, ref error);
 
-                            if (IsDisapproved)
+                            if (IsRejected)
                             {
                                 LogWorkflowFinished();
-                                Database.IncrementDisapprovedCount();
-                                entry.Status = Db.Status.Disapproved;
+                                Database.IncrementRejectedCount();
+                                entry.Status = Db.Status.Rejected;
                                 entry.StatusDate = DateTime.Now;
                                 entry.Logs = string.Join("\r\n", Logs);
                                 Database.UpdateEntry(entry.GetDbId(), entry);
-                                _historyEntry.Status = Db.Status.Disapproved;
+                                _historyEntry.Status = Db.Status.Rejected;
                             }
                             else
                             {
@@ -1042,19 +1063,19 @@ namespace Wexflow.Core
                                     Database.UpdateEntry(entry.GetDbId(), entry);
                                     _historyEntry.Status = Db.Status.Failed;
                                     break;
-                                case Status.Disapproved:
-                                    if (ExecutionGraph.OnDisapproved != null)
+                                case Status.Rejected:
+                                    if (ExecutionGraph.OnRejected != null)
                                     {
-                                        var disapprovedTasks = NodesToTasks(ExecutionGraph.OnDisapproved.Nodes);
-                                        RunTasks(ExecutionGraph.OnDisapproved.Nodes, disapprovedTasks, true);
+                                        var rejectedTasks = NodesToTasks(ExecutionGraph.OnRejected.Nodes);
+                                        RunTasks(ExecutionGraph.OnRejected.Nodes, rejectedTasks, true);
                                     }
                                     LogWorkflowFinished();
-                                    Database.IncrementDisapprovedCount();
-                                    entry.Status = Db.Status.Disapproved;
+                                    Database.IncrementRejectedCount();
+                                    entry.Status = Db.Status.Rejected;
                                     entry.StatusDate = DateTime.Now;
                                     entry.Logs = string.Join("\r\n", Logs);
                                     Database.UpdateEntry(entry.GetDbId(), entry);
-                                    _historyEntry.Status = Db.Status.Disapproved;
+                                    _historyEntry.Status = Db.Status.Rejected;
                                     break;
                             }
                         }
@@ -1071,9 +1092,19 @@ namespace Wexflow.Core
                     }
                     catch (Exception e)
                     {
-                        var msg = string.Format("An error occured while running the workflow. Error: {0}", this);
-                        Logger.Error(msg, e);
+                        var emsg = string.Format("An error occured while running the workflow. Error: {0}", this);
+                        Logger.Error(emsg, e);
                         Logs.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture) + "  ERROR - " + msg + "\r\n" + e);
+                        Database.DecrementRunningCount();
+                        Database.IncrementFailedCount();
+                        entry.Status = Db.Status.Failed;
+                        entry.StatusDate = DateTime.Now;
+                        entry.Logs = string.Join("\r\n", Logs);
+                        Database.UpdateEntry(entry.GetDbId(), entry);
+                        _historyEntry.Status = Db.Status.Failed;
+                        _historyEntry.StatusDate = DateTime.Now;
+                        _historyEntry.Logs = string.Join("\r\n", Logs);
+                        Database.InsertHistoryEntry(_historyEntry);
                     }
                     finally
                     {
@@ -1087,9 +1118,8 @@ namespace Wexflow.Core
                         foreach (List<Entity> entities in EntitiesPerTask.Values) entities.Clear();
                         _thread = null;
                         IsRunning = false;
-                        IsDisapproved = false;
+                        IsRejected = false;
                         GC.Collect();
-
 
                         JobId = ++ParallelJobId;
                         Jobs.Remove(InstanceId);
@@ -1207,9 +1237,9 @@ namespace Wexflow.Core
                 }
             }
 
-            if (IsDisapproved)
+            if (IsRejected)
             {
-                return Status.Disapproved;
+                return Status.Rejected;
             }
 
             if (success)
@@ -1231,7 +1261,7 @@ namespace Wexflow.Core
             foreach (var task in tasks)
             {
                 if (!task.IsEnabled) continue;
-                if (IsApproval && IsDisapproved) break;
+                if (IsApproval && IsRejected) break;
                 var status = task.Run();
                 Logs.AddRange(task.Logs);
                 success &= status.Status == Status.Success;
@@ -1274,7 +1304,7 @@ namespace Wexflow.Core
                     var task = GetTask(tasks, node.Id);
                     if (task != null)
                     {
-                        if (task.IsEnabled && ((!IsApproval || (IsApproval && !IsDisapproved)) || force))
+                        if (task.IsEnabled && ((!IsApproval || (IsApproval && !IsRejected)) || force))
                         {
                             var status = task.Run();
                             Logs.AddRange(task.Logs);
@@ -1308,7 +1338,7 @@ namespace Wexflow.Core
                                     var childTask = GetTask(tasks, childNode.Id);
                                     if (childTask != null)
                                     {
-                                        if (childTask.IsEnabled && ((!IsApproval || (IsApproval && !IsDisapproved)) || force))
+                                        if (childTask.IsEnabled && ((!IsApproval || (IsApproval && !IsRejected)) || force))
                                         {
                                             var childStatus = childTask.Run();
                                             Logs.AddRange(childTask.Logs);
@@ -1364,7 +1394,7 @@ namespace Wexflow.Core
 
             if (ifTask != null)
             {
-                if (ifTask.IsEnabled && (!IsApproval || (IsApproval && !IsDisapproved)))
+                if (ifTask.IsEnabled && (!IsApproval || (IsApproval && !IsRejected)))
                 {
                     var status = ifTask.Run();
                     Logs.AddRange(ifTask.Logs);
@@ -1391,7 +1421,7 @@ namespace Wexflow.Core
                     }
                     else if (status.Condition == false)
                     {
-                        if (@if.ElseNodes.Length > 0)
+                        if (@if.ElseNodes != null && @if.ElseNodes.Length > 0)
                         {
                             // Build Tasks
                             var elseTasks = NodesToTasks(@if.ElseNodes);
@@ -1424,7 +1454,7 @@ namespace Wexflow.Core
 
             if (whileTask != null)
             {
-                if (whileTask.IsEnabled && (!IsApproval || (IsApproval && !IsDisapproved)))
+                if (whileTask.IsEnabled && (!IsApproval || (IsApproval && !IsRejected)))
                 {
                     while (true)
                     {
@@ -1475,7 +1505,7 @@ namespace Wexflow.Core
 
             if (switchTask != null)
             {
-                if (switchTask.IsEnabled && (!IsApproval || (IsApproval && !IsDisapproved)))
+                if (switchTask.IsEnabled && (!IsApproval || (IsApproval && !IsRejected)))
                 {
                     var status = switchTask.Run();
                     Logs.AddRange(switchTask.Logs);
@@ -1544,7 +1574,7 @@ namespace Wexflow.Core
                     IsWaitingForApproval = false;
                     Database.DecrementRunningCount();
                     Database.IncrementStoppedCount();
-                    var entry = Database.GetEntry(Id);
+                    var entry = Database.GetEntry(Id, InstanceId);
                     entry.Status = Db.Status.Stopped;
                     entry.StatusDate = DateTime.Now;
                     entry.Logs = logs;
@@ -1553,7 +1583,7 @@ namespace Wexflow.Core
                     _historyEntry.StatusDate = DateTime.Now;
                     _historyEntry.Logs = logs;
                     Database.InsertHistoryEntry(_historyEntry);
-                    IsDisapproved = false;
+                    IsRejected = false;
                     Logs.Clear();
                     Jobs.Remove(InstanceId);
 
@@ -1592,7 +1622,7 @@ namespace Wexflow.Core
                     IsPaused = true;
                     Database.IncrementPendingCount();
                     Database.DecrementRunningCount();
-                    var entry = Database.GetEntry(Id);
+                    var entry = Database.GetEntry(Id, InstanceId);
                     entry.Status = Db.Status.Pending;
                     entry.StatusDate = DateTime.Now;
                     Database.UpdateEntry(entry.GetDbId(), entry);
@@ -1623,7 +1653,7 @@ namespace Wexflow.Core
 #pragma warning restore 618
                     Database.IncrementRunningCount();
                     Database.DecrementPendingCount();
-                    var entry = Database.GetEntry(Id);
+                    var entry = Database.GetEntry(Id, InstanceId);
                     entry.Status = Db.Status.Running;
                     entry.StatusDate = DateTime.Now;
                     Database.UpdateEntry(entry.GetDbId(), entry);
@@ -1649,28 +1679,28 @@ namespace Wexflow.Core
             if (IsApproval)
             {
                 var task = Tasks.Where(t => t.IsWaitingForApproval).First();
-                var dir = Path.Combine(ApprovalFolder, Id.ToString(), task.Id.ToString());
+                var dir = Path.Combine(ApprovalFolder, Id.ToString(), InstanceId.ToString(), task.Id.ToString());
                 Directory.CreateDirectory(dir);
                 File.WriteAllText(Path.Combine(dir, "task.approved"), "Task " + task.Id + " of the workflow " + Id + " approved.");
-                IsDisapproved = false;
+                IsRejected = false;
             }
         }
 
         /// <summary>
-        /// Disapproves the current workflow.
+        /// Rejects the current workflow.
         /// </summary>
-        public void Disapprove()
+        public void Reject()
         {
             if (IsApproval)
             {
-                IsDisapproved = true;
+                IsRejected = true;
             }
         }
 
         private void CreateTempFolder()
         {
             // WorkflowId/dd-MM-yyyy/HH-mm-ss-fff
-            var wfTempFolder = Path.Combine(WexflowTempFolder, Id.ToString(CultureInfo.CurrentCulture));
+            var wfTempFolder = Path.Combine(WexflowTempFolder, Id.ToString(CultureInfo.InvariantCulture));
             if (!Directory.Exists(wfTempFolder)) Directory.CreateDirectory(wfTempFolder);
 
             var wfDayTempFolder = Path.Combine(wfTempFolder, string.Format("{0:yyyy-MM-dd}", DateTime.Now));

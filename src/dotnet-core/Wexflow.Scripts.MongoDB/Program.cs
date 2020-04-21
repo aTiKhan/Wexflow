@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using Wexflow.Core.MongoDB;
+using Wexflow.Core.Db.MongoDB;
 using Wexflow.Scripts.Core;
 
 namespace Wexflow.Scripts.MongoDB
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wexflow.Core.MySQL;
+using Wexflow.Core.Db.MySQL;
 
 namespace Wexflow.Scripts.MySQL
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Configuration;
-using Wexflow.Core.SQLServer;
+using Wexflow.Core.Db.SQLServer;
 
 namespace Wexflow.Scripts.SQLServer
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

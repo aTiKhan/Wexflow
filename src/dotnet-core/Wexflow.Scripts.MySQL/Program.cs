@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using Wexflow.Core.MySQL;
+using Wexflow.Core.Db.MySQL;
 
 namespace Wexflow.Scripts.MySQL
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

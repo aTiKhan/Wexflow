@@ -1,3 +1,3 @@
 ﻿Settings = {
-    Uri: "http://localhost:8000/wexflow/"
+    Uri: "http://" + (window.location.hostname === "" ? "localhost" : window.location.hostname) + ":8000/wexflow/"
 };

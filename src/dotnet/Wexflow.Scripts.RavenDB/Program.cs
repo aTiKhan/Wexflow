@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Configuration;
-using Wexflow.Core.RavenDB;
+using Wexflow.Core.Db.RavenDB;
 using Wexflow.Scripts.Core;
 
 namespace Wexflow.Scripts.RavenDB
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

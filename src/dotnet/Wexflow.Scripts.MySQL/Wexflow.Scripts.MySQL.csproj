@@ -105,13 +105,13 @@
     <Content Include="Wexflow.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Wexflow.Core.Db.MySQL\Wexflow.Core.Db.MySQL.csproj">
+      <Project>{e7d38365-9ce1-45be-bdcd-c63a94921e27}</Project>
+      <Name>Wexflow.Core.Db.MySQL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Wexflow.Core.Db\Wexflow.Core.Db.csproj">
       <Project>{ffe105a5-1c72-4e7d-bc48-5f5902376893}</Project>
       <Name>Wexflow.Core.Db</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Wexflow.Core.MySQL\Wexflow.Core.MySQL.csproj">
-      <Project>{e7d38365-9ce1-45be-bdcd-c63a94921e27}</Project>
-      <Name>Wexflow.Core.MySQL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Wexflow.Scripts.Core\Wexflow.Scripts.Core.csproj">
       <Project>{61a3d5e0-6d95-43ee-bec5-2dc10771735f}</Project>

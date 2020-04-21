@@ -1,6 +1,6 @@
 ::@echo off
 
-set version=5.3
+set version=5.5
 set dst=wexflow
 set zip=wexflow-%version%-macos-dotnet-core.zip
 set dstDir=.\%dst%
@@ -36,20 +36,22 @@ copy "..\src\backend\Wexflow.Backend\forgot-password.html" %dstDir%\%backend%\
 copy "..\src\backend\Wexflow.Backend\dashboard.html" %dstDir%\%backend%\
 copy "..\src\backend\Wexflow.Backend\manager.html" %dstDir%\%backend%\
 copy "..\src\backend\Wexflow.Backend\designer.html" %dstDir%\%backend%\
-copy "..\src\backend\Wexflow.Backend\approval.html" %dstDir%\%backend%\
+::copy "..\src\backend\Wexflow.Backend\editor.html" %dstDir%\%backend%\
 copy "..\src\backend\Wexflow.Backend\history.html" %dstDir%\%backend%\
 copy "..\src\backend\Wexflow.Backend\users.html" %dstDir%\%backend%\
 copy "..\src\backend\Wexflow.Backend\profiles.html" %dstDir%\%backend%\
 
 xcopy "..\src\backend\Wexflow.Backend\images\*" %dstDir%\%backend%\images\ /s /e
 
-xcopy "..\src\backend\Wexflow.Backend\css\images\*" %dstDir%\%backend%\css\images\ /s /e
+xcopy "..\src\backend\Wexflow.Backend\assets\*" %dstDir%\%backend%\assets\ /s /e
+
+xcopy "..\src\backend\Wexflow.Backend\css\images\*" %dstDir%\%backend%\css\images`\ /s /e
 copy "..\src\backend\Wexflow.Backend\css\login.min.css" %dstDir%\%backend%\css
 copy "..\src\backend\Wexflow.Backend\css\forgot-password.min.css" %dstDir%\%backend%\css
 copy "..\src\backend\Wexflow.Backend\css\dashboard.min.css" %dstDir%\%backend%\css
 copy "..\src\backend\Wexflow.Backend\css\manager.min.css" %dstDir%\%backend%\css
+::copy "..\src\backend\Wexflow.Backend\css\editor.min.css" %dstDir%\%backend%\css
 copy "..\src\backend\Wexflow.Backend\css\designer.min.css" %dstDir%\%backend%\css
-copy "..\src\backend\Wexflow.Backend\css\approval.min.css" %dstDir%\%backend%\css
 copy "..\src\backend\Wexflow.Backend\css\history.min.css" %dstDir%\%backend%\css
 copy "..\src\backend\Wexflow.Backend\css\users.min.css" %dstDir%\%backend%\css
 copy "..\src\backend\Wexflow.Backend\css\profiles.min.css" %dstDir%\%backend%\css
@@ -70,14 +72,14 @@ copy "..\src\backend\Wexflow.Backend\js\ext-prompt.js" %dstDir%\%backend%\js
 copy "..\src\backend\Wexflow.Backend\js\ext-keybinding_menu.js" %dstDir%\%backend%\js
 copy "..\src\backend\Wexflow.Backend\js\ext-settings_menu.js" %dstDir%\%backend%\js
 copy "..\src\backend\Wexflow.Backend\js\theme-*.js" %dstDir%\%backend%\js
-copy "..\src\backend\Wexflow.Backend\js\designer.min.js" %dstDir%\%backend%\js
-::copy "..\src\backend\Wexflow.Backend\js\common.js" %dstDir%\%backend%\js
-::copy "..\src\backend\Wexflow.Backend\js\authenticate.js" %dstDir%\%backend%\js
-::copy "..\src\backend\Wexflow.Backend\js\cytoscape-dagre.min.js" %dstDir%\%backend%\js
-::copy "..\src\backend\Wexflow.Backend\js\highlight.pack.js" %dstDir%\%backend%\js
-::copy "..\src\backend\Wexflow.Backend\js\designer.js" %dstDir%\%backend%\js
 
-copy "..\src\backend\Wexflow.Backend\js\approval.min.js" %dstDir%\%backend%\js
+copy "..\src\backend\Wexflow.Backend\js\blockly_compressed.js" %dstDir%\%backend%\js
+copy "..\src\backend\Wexflow.Backend\js\blocks_compressed.js" %dstDir%\%backend%\js
+copy "..\src\backend\Wexflow.Backend\js\en.js" %dstDir%\%backend%\js
+::copy "..\src\backend\Wexflow.Backend\js\editor.min.js" %dstDir%\%backend%\js
+
+copy "..\src\backend\Wexflow.Backend\js\designer.min.js" %dstDir%\%backend%\js
+
 copy "..\src\backend\Wexflow.Backend\js\history.min.js" %dstDir%\%backend%\js
 copy "..\src\backend\Wexflow.Backend\js\users.min.js" %dstDir%\%backend%\js
 copy "..\src\backend\Wexflow.Backend\js\profiles.min.js" %dstDir%\%backend%\js
@@ -114,6 +116,18 @@ copy dotnet-core\macos\MySQL\appsettings.json %dstDir%\Wexflow.Scripts.MySQL
 :: SQLite script
 dotnet publish ..\src\dotnet-core\Wexflow.Scripts.SQLite\Wexflow.Scripts.SQLite.csproj --force --output %~dp0\%dstDir%\Wexflow.Scripts.SQLite
 copy dotnet-core\macos\SQLite\appsettings.json %dstDir%\Wexflow.Scripts.SQLite
+
+:: Firebird script
+dotnet publish ..\src\dotnet-core\Wexflow.Scripts.Firebird\Wexflow.Scripts.Firebird.csproj --force --output %~dp0\%dstDir%\Wexflow.Scripts.Firebird
+copy dotnet-core\macos\Firebird\appsettings.json %dstDir%\Wexflow.Scripts.Firebird
+
+:: Oracle script
+dotnet publish ..\src\dotnet-core\Wexflow.Scripts.Oracle\Wexflow.Scripts.Oracle.csproj --force --output %~dp0\%dstDir%\Wexflow.Scripts.Oracle
+copy dotnet-core\macos\Oracle\appsettings.json %dstDir%\Wexflow.Scripts.Oracle
+
+:: MariaDB script
+dotnet publish ..\src\dotnet-core\Wexflow.Scripts.MariaDB\Wexflow.Scripts.MariaDB.csproj --force --output %~dp0\%dstDir%\Wexflow.Scripts.MariaDB
+copy dotnet-core\macos\MariaDB\appsettings.json %dstDir%\Wexflow.Scripts.MariaDB
 
 :: Wexflow.Clients.CommandLine
 dotnet publish ..\src\dotnet-core\Wexflow.Clients.CommandLine\Wexflow.Clients.CommandLine.csproj --force --output %~dp0\%dstDir%\Wexflow.Clients.CommandLine

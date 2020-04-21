@@ -85,9 +85,10 @@ namespace Wexflow.Core.Db
         public abstract void IncrementDisabledCount();
         public abstract void IncrementRunningCount();
         public abstract Entry GetEntry(int workflowId);
+        public abstract Entry GetEntry(int workflowId, Guid jobId);
         public abstract void InsertEntry(Entry entry);
         public abstract void UpdateEntry(string id, Entry entry);
-        public abstract void IncrementDisapprovedCount();
+        public abstract void IncrementRejectedCount();
         public abstract void IncrementDoneCount();
         public abstract void IncrementWarningCount();
         public abstract void IncrementFailedCount();
@@ -98,6 +99,7 @@ namespace Wexflow.Core.Db
         public abstract void DecrementPendingCount();
         public abstract string GetEntryLogs(string entryId);
         public abstract string GetHistoryEntryLogs(string entryId);
+        public abstract void Dispose();
 
         public static string GetMd5(string input)
         {

@@ -99,13 +99,13 @@
     <EmbeddedResource Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Wexflow.Core.Db.RavenDB\Wexflow.Core.Db.RavenDB.csproj">
+      <Project>{15a456e4-6992-4586-97aa-4f0279434de5}</Project>
+      <Name>Wexflow.Core.Db.RavenDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Wexflow.Core.Db\Wexflow.Core.Db.csproj">
       <Project>{ffe105a5-1c72-4e7d-bc48-5f5902376893}</Project>
       <Name>Wexflow.Core.Db</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Wexflow.Core.RavenDB\Wexflow.Core.RavenDB.csproj">
-      <Project>{15a456e4-6992-4586-97aa-4f0279434de5}</Project>
-      <Name>Wexflow.Core.RavenDB</Name>
     </ProjectReference>
     <ProjectReference Include="..\Wexflow.Scripts.Core\Wexflow.Scripts.Core.csproj">
       <Project>{61a3d5e0-6d95-43ee-bec5-2dc10771735f}</Project>

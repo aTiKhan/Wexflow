@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using Wexflow.Core.CosmosDB;
+using Wexflow.Core.Db.CosmosDB;
 
 namespace Wexflow.Scripts.CosmosDB
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Configuration;
-using Wexflow.Core.SQLite;
+using Wexflow.Core.Db.SQLite;
 
 namespace Wexflow.Scripts.SQLite
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {

@@ -22,28 +22,28 @@ namespace Wexflow.Tasks.Approval
             {
                 if (Workflow.IsApproval)
                 {
-                    var trigger = Path.Combine(Workflow.ApprovalFolder, Workflow.Id.ToString(), Id.ToString(), "task.approved");
+                    var trigger = Path.Combine(Workflow.ApprovalFolder, Workflow.Id.ToString(), Workflow.InstanceId.ToString(), Id.ToString(), "task.approved");
 
                     IsWaitingForApproval = true;
                     Workflow.IsWaitingForApproval = true;
 
-                    while (!File.Exists(trigger) && !Workflow.IsDisapproved)
+                    while (!File.Exists(trigger) && !Workflow.IsRejected)
                     {
                         Thread.Sleep(500);
                     }
 
                     IsWaitingForApproval = false;
                     Workflow.IsWaitingForApproval = false;
-                    if (!Workflow.IsDisapproved)
+                    if (!Workflow.IsRejected)
                     {
                         InfoFormat("Task approved: {0}", trigger);
                     }
                     else
                     {
-                        Info("This workflow has been disapproved.");
+                        Info("This workflow has been rejected.");
                     }
-                    
-                    if(File.Exists(trigger))
+
+                    if (File.Exists(trigger))
                     {
                         File.Delete(trigger);
                     }

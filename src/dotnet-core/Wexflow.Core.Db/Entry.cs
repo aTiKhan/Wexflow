@@ -11,7 +11,7 @@ namespace Wexflow.Core.Db
         Warning,
         Disabled,
         Stopped,
-        Disapproved
+        Rejected
     }
 
     public enum LaunchType
@@ -27,6 +27,7 @@ namespace Wexflow.Core.Db
         public static readonly string DocumentName = "entries";
 
         public int WorkflowId { get; set; }
+        public string JobId { get; set; }
         public string Name { get; set; }
         public LaunchType LaunchType { get; set; }
         public string Description { get; set; }

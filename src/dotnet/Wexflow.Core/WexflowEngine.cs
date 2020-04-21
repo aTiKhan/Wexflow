@@ -2,6 +2,7 @@
 using Quartz.Impl;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -47,7 +48,19 @@ namespace Wexflow.Core
         /// <summary>
         /// SQLite
         /// </summary>
-        SQLite
+        SQLite,
+        /// <summary>
+        /// Firebird
+        /// </summary>
+        Firebird,
+        /// <summary>
+        /// Oracle
+        /// </summary>
+        Oracle,
+        /// <summary>
+        /// MariaDB
+        /// </summary>
+        MariaDB
     }
 
     /// <summary>
@@ -55,15 +68,6 @@ namespace Wexflow.Core
     /// </summary>
     public class WexflowEngine
     {
-        /// <summary>
-        /// Maximum retries of loading a workflow.
-        /// </summary>
-        public static int MaxRetries;
-        /// <summary>
-        /// Retry timeout.
-        /// </summary>
-        public static int RetryTimeout;
-
         /// <summary>
         /// Settings file path.
         /// </summary>
@@ -124,8 +128,17 @@ namespace Wexflow.Core
         //
         // Quartz scheduler
         //
-        private static readonly ISchedulerFactory SchedulerFactory = new StdSchedulerFactory();
-        private static readonly IScheduler QuartzScheduler = SchedulerFactory.GetScheduler();
+        private static readonly NameValueCollection QuartzProperties = new NameValueCollection
+        {
+            // JSON serialization is the one supported under .NET Core (binary isn't)
+            //["quartz.serializer.type"] = "json"
+
+            // "binary" is alias for "Quartz.Simpl.BinaryObjectSerializer, Quartz" 
+            ["quartz.serializer.type"] = "binary"
+        };
+
+        private static readonly ISchedulerFactory SchedulerFactory = new StdSchedulerFactory(QuartzProperties);
+        private static readonly IScheduler QuartzScheduler = SchedulerFactory.GetScheduler().Result;
 
         /// <summary>
         /// Creates a new instance of Wexflow engine.
@@ -133,6 +146,8 @@ namespace Wexflow.Core
         /// <param name="settingsFile">Settings file path.</param>
         public WexflowEngine(string settingsFile)
         {
+            log4net.Config.XmlConfigurator.Configure();
+
             SettingsFile = settingsFile;
             Workflows = new List<Workflow>();
 
@@ -144,28 +159,37 @@ namespace Wexflow.Core
             switch (DbType)
             {
                 case DbType.CosmosDB:
-                    Database = new CosmosDB.Db(ConnectionString);
-                    break;
-                case DbType.LiteDB:
-                    Database = new LiteDB.Db(ConnectionString);
+                    Database = new Db.CosmosDB.Db(ConnectionString);
                     break;
                 case DbType.MongoDB:
-                    Database = new MongoDB.Db(ConnectionString);
+                    Database = new Db.MongoDB.Db(ConnectionString);
+                    break;
+                case DbType.LiteDB:
+                    Database = new Db.LiteDB.Db(ConnectionString);
                     break;
                 case DbType.RavenDB:
-                    Database = new RavenDB.Db(ConnectionString);
+                    Database = new Db.RavenDB.Db(ConnectionString);
                     break;
                 case DbType.PostgreSQL:
-                    Database = new PostgreSQL.Db(ConnectionString);
+                    Database = new Db.PostgreSQL.Db(ConnectionString);
                     break;
                 case DbType.SQLServer:
-                    Database = new SQLServer.Db(ConnectionString);
+                    Database = new Db.SQLServer.Db(ConnectionString);
                     break;
                 case DbType.MySQL:
-                    Database = new MySQL.Db(ConnectionString);
+                    Database = new Db.MySQL.Db(ConnectionString);
                     break;
                 case DbType.SQLite:
-                    Database = new SQLite.Db(ConnectionString);
+                    Database = new Db.SQLite.Db(ConnectionString);
+                    break;
+                case DbType.Firebird:
+                    Database = new Db.Firebird.Db(ConnectionString);
+                    break;
+                case DbType.Oracle:
+                    Database = new Db.Oracle.Db(ConnectionString);
+                    break;
+                case DbType.MariaDB:
+                    Database = new Db.MariaDB.Db(ConnectionString);
                     break;
             }
 
@@ -205,8 +229,6 @@ namespace Wexflow.Core
             DbType = (DbType)Enum.Parse(typeof(DbType), GetWexflowSetting(xdoc, "dbType"), true);
             ConnectionString = GetWexflowSetting(xdoc, "connectionString");
             GlobalVariablesFile = GetWexflowSetting(xdoc, "globalVariablesFile");
-            MaxRetries = int.Parse(GetWexflowSetting(xdoc, "maxRetries"));
-            RetryTimeout = int.Parse(GetWexflowSetting(xdoc, "retryTimeout"));
         }
 
         private void LoadGlobalVariables()
@@ -244,11 +266,6 @@ namespace Wexflow.Core
 
         private void LoadWorkflows()
         {
-            //foreach (string file in Directory.GetFiles(@"C:\Wexflow\Workflows\prod"))
-            //{
-            //    Database.InsertWorkflow(new Db.Workflow { Xml = File.ReadAllText(file) });
-            //}
-
             var workflows = Database.GetWorkflows();
 
             foreach (var workflow in workflows)
@@ -263,7 +280,7 @@ namespace Wexflow.Core
         {
             string jobIdentity = "Workflow Job " + workflowId;
             var jobKey = new JobKey(jobIdentity);
-            if (QuartzScheduler.CheckExists(jobKey))
+            if (QuartzScheduler.CheckExists(jobKey).Result)
             {
                 QuartzScheduler.DeleteJob(jobKey);
             }
@@ -302,7 +319,7 @@ namespace Wexflow.Core
         /// <param name="userId">User id.</param>
         /// <param name="userProfile">User profile.</param>
         /// <returns>Workflow db id.</returns>
-        public string SaveWorkflow(string userId, Db.UserProfile userProfile, string xml)
+        public string SaveWorkflow(string userId, UserProfile userProfile, string xml)
         {
             try
             {
@@ -383,6 +400,7 @@ namespace Wexflow.Core
                             Logger.ErrorFormat("An error occured while saving the workflow {0}:", e, xml);
                             return "-1";
                         }
+
                         var workflowFromDb = Database.GetWorkflow(workflow.DbId);
                         workflowFromDb.Xml = xml;
                         Database.UpdateWorkflow(workflow.DbId, workflowFromDb);
@@ -418,7 +436,7 @@ namespace Wexflow.Core
         /// <summary>
         /// Deletes a workflow from the database.
         /// </summary>
-        /// <param name="dbId">DB Id</param>
+        /// <param name="dbId">DB ID.</param>
         public void DeleteWorkflow(string dbId)
         {
             try
@@ -580,7 +598,7 @@ namespace Wexflow.Core
 
             if (!QuartzScheduler.IsStarted)
             {
-                QuartzScheduler.Start();
+                QuartzScheduler.Start().Wait();
             }
         }
 
@@ -596,8 +614,10 @@ namespace Wexflow.Core
                     }
                     else if (wf.LaunchType == LaunchType.Periodic)
                     {
-                        IDictionary<string, object> map = new Dictionary<string, object>();
-                        map.Add("workflow", wf);
+                        IDictionary<string, object> map = new Dictionary<string, object>
+                        {
+                            { "workflow", wf }
+                        };
 
                         string jobIdentity = "Workflow Job " + wf.Id;
                         IJobDetail jobDetail = JobBuilder.Create<WorkflowJob>()
@@ -613,18 +633,20 @@ namespace Wexflow.Core
                             .Build();
 
                         var jobKey = new JobKey(jobIdentity);
-                        if (QuartzScheduler.CheckExists(jobKey))
+                        if (QuartzScheduler.CheckExists(jobKey).Result)
                         {
                             QuartzScheduler.DeleteJob(jobKey);
                         }
 
-                        QuartzScheduler.ScheduleJob(jobDetail, trigger);
+                        QuartzScheduler.ScheduleJob(jobDetail, trigger).Wait();
 
                     }
                     else if (wf.LaunchType == LaunchType.Cron)
                     {
-                        IDictionary<string, object> map = new Dictionary<string, object>();
-                        map.Add("workflow", wf);
+                        IDictionary<string, object> map = new Dictionary<string, object>
+                        {
+                            { "workflow", wf }
+                        };
 
                         string jobIdentity = "Workflow Job " + wf.Id;
                         IJobDetail jobDetail = JobBuilder.Create<WorkflowJob>()
@@ -640,12 +662,12 @@ namespace Wexflow.Core
                             .Build();
 
                         var jobKey = new JobKey(jobIdentity);
-                        if (QuartzScheduler.CheckExists(jobKey))
+                        if (QuartzScheduler.CheckExists(jobKey).Result)
                         {
                             QuartzScheduler.DeleteJob(jobKey);
                         }
 
-                        QuartzScheduler.ScheduleJob(jobDetail, trigger);
+                        QuartzScheduler.ScheduleJob(jobDetail, trigger).Wait();
                     }
                 }
             }
@@ -664,7 +686,7 @@ namespace Wexflow.Core
         {
             if (stopQuartzScheduler)
             {
-                QuartzScheduler.Shutdown();
+                QuartzScheduler.Shutdown().Wait();
             }
 
             foreach (var wf in Workflows)
@@ -680,6 +702,8 @@ namespace Wexflow.Core
                 Database.ClearStatusCount();
                 Database.ClearEntries();
             }
+
+            Database.Dispose();
         }
 
         /// <summary>
@@ -862,7 +886,7 @@ namespace Wexflow.Core
         /// </summary>
         /// <param name="workflowId">Workflow Id.</param>
         /// <param name="instanceId">Job instance Id.</param>
-        public bool DisapproveWorkflow(int workflowId, Guid instanceId)
+        public bool RejectWorkflow(int workflowId, Guid instanceId)
         {
             try
             {
@@ -886,7 +910,7 @@ namespace Wexflow.Core
                         }
                         else
                         {
-                            innerWf.Disapprove();
+                            innerWf.Reject();
                             return true;
                         }
                     }

@@ -9,7 +9,7 @@
 	"EnvironmentVariable": [ "name" ],
 	"ExecCs": [ "selectFiles" ],
 	"ExecVb": [ "selectFiles" ],
-	"FileContentMatch": [ "file", "pattern" ],
+	"FileContentMatch": [ "file", "folder", "recursive" , "pattern" ],
 	"FileExists": [ "file" ],
 	"FileMatch": [ "dir", "pattern", "recurssive" ],
 	"FilesConcat": [ "selectFiles" ],
@@ -50,7 +50,7 @@
 	"JsonToYaml": ["selectFiles"],
 	"ListEntities": [ ],
 	"ListFiles": [ ],
-	"MailsReceiver": [ "host", "port", "enableSsl", "user", "password", "messageCount", "deleteMessages" ],
+	"MailsReceiver": [ "host", "port", "enableSsl", "user", "password", "messageCount", "deleteMessages", "protocol" ],
 	"MailsSender": [ "selectFiles", "selectAttachments", "host", "port", "enableSsl", "user", "password" ],
 	"Md5": [ "selectFiles" ],
 	"MediaInfo": [ "selectFiles" ],
@@ -100,7 +100,7 @@
 	"Wmi": [ "query" ],
 	"Workflow": [ "wexflowWebServiceUri", "action", "id" ],
 	"XmlToCsv": [ "selectFiles" ],
-	"Xslt": [ "selectFiles", "xsltPath", "version", "removeWexflowProcessingNodes" ],
+	"Xslt": [ "selectFiles", "xsltPath", "outputFormat", "removeWexflowProcessingNodes" ],
 	"YamlToJson": [ "selectFiles" ],
 	"Zip": [ "selectFiles", "zipFileName" ]
 }

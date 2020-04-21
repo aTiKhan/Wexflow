@@ -16,7 +16,7 @@
     height: 43px;
     background: #29A85C;
     color: #FFFFFF;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3);
 }
 
 #header a {
@@ -34,9 +34,9 @@
     float: right;
 }
 
-#header #lnk-manager, #lnk-designer, #lnk-approval, #lnk-users {
-    display: none;
-}
+    #header #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users {
+        display: none;
+    }
 
 #profiles {
     display: none;
@@ -78,12 +78,29 @@
     overflow: auto;
 }
 
-#users-table .thead-dark {
+/* users table */
+
+#users-table #wf-users-table {
+    display: block;
+    table-layout: fixed;
+    margin: 0;
+}
+
+#users-table #wf-users-table thead, tbody {
+    display: block;
+}
+
+#users-table #wf-users-table tbody {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+#users-table #wf-users-table .thead-dark {
     background: #272727;
     color: #EEEEEE;
 }
 
-#users-table tbody tr:hover {
+#users-table #wf-users-table tbody tr:hover {
     background: #EEEEEE;
 }
 
@@ -125,44 +142,60 @@
     bottom: 0;
     right: 10px;
     left: 10px;
-    overflow: auto;
+    overflow: hidden;
 }
 
-/* start of table style */
+/* workflows table */
 
-#workflows .thead-dark {
+#workflows #wf-workflows-table {
+    display: block;
+    table-layout: fixed;
+    margin: 0;
+    width: 100%;
+}
+
+#workflows #wf-workflows-table thead, tbody {
+    display: block;
+}
+
+#workflows #wf-workflows-table tbody {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+#workflows #wf-workflows-table .thead-dark {
     background: #272727;
     color: #EEEEEE;
 }
 
-#workflows tbody tr:hover {
+#workflows #wf-workflows-table tbody tr:hover {
     background: #EEEEEE;
 }
 
-#workflows #workflows-table .wf-id {
+#workflows #wf-workflows-table .wf-id {
     width: 45px;
 }
 
-#workflows #workflows-table .wf-n {
+#workflows #wf-workflows-table .wf-n {
     width: 200px;
 }
 
-#workflows #workflows-table .wf-lt {
+#workflows #wf-workflows-table .wf-lt {
     width: 100px;
 }
 
-#workflows #workflows-table .wf-e {
+#workflows #wf-workflows-table .wf-e {
     width: 75px;
 }
 
-#workflows #workflows-table .wf-a {
+#workflows #wf-workflows-table .wf-a {
     width: 75px;
 }
 
-#workflows #workflows-table tbody tr:hover {
+#workflows #wf-workflows-table tbody tr:hover {
     cursor: pointer;
 }
 
-#workflows #workflows-table .selected, #workflows #workflows-table .selected:hover {
+#workflows #wf-workflows-table .selected, #workflows #wf-workflows-table .selected:hover {
     background-color: #ffb347;
 }

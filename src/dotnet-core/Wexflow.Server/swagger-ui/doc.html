@@ -104,7 +104,7 @@
 
                                 // Begin Swagger UI call region
                                 const ui = SwaggerUIBundle({
-                                    url: "http://localhost:8000/swagger-ui/swagger.yaml",
+                                    url: "http://" + window.location.hostname + ":" + window.location.port + "/swagger-ui/swagger.yaml",
                                     dom_id: '#swagger-ui',
                                     defaultModelsExpandDepth: -1,
                                     deepLinking: true,
@@ -116,15 +116,18 @@
                                         SwaggerUIBundle.plugins.DownloadUrl
                                     ],
                                     //layout: "StandaloneLayout",
-                                    requestInterceptor: (req) => {
-                                        if (!req.loadSpec) {
-                                            // Add the header to "try it out" calls but not spec fetches
-                                            req.headers.Authorization = auth;
-                                        }
-                                        return req;
-                                    }
                                 });
                                 // End Swagger UI call region
+
+                                ui.getConfigs().requestInterceptor = (req) => {
+                                    if (!req.loadSpec) {
+                                        // Add the header to "try it out" calls but not spec fetches
+                                        req.headers.Authorization = auth;
+                                    }
+                                    req.contextUrl = window.location.origin + "/";
+                                    req.url = req.url.replace(/http:\/\/[^/]*\//i, req.contextUrl);
+                                    return req;
+                                };
 
                                 window.ui = ui;
                             } else {

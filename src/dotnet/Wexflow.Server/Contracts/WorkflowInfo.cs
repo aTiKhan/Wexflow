@@ -10,41 +10,43 @@ namespace Wexflow.Server.Contracts
         Cron
     }
 
-    public class WorkflowInfo:IComparable
+    public class WorkflowInfo : IComparable
     {
         public string DbId { get; set; }
 
-        public int Id { get;  set; }
+        public int Id { get; set; }
 
         public Guid InstanceId { get; set; }
 
-        public string Name { get;  set; }
+        public string Name { get; set; }
 
-        public LaunchType LaunchType { get;  set; }
+        public LaunchType LaunchType { get; set; }
 
-        public bool IsEnabled { get;  set; }
+        public bool IsEnabled { get; set; }
 
         public bool IsApproval { get; private set; }
-        
+
         public bool EnableParallelJobs { get; private set; }
 
         public bool IsWaitingForApproval { get; private set; }
 
-        public string Description { get;  set; }
+        public string Description { get; set; }
 
         public bool IsRunning { get; set; }
-        
+
         public bool IsPaused { get; set; }
-        
+
         public string Period { get; set; }
-        
-        public string CronExpression { get;  set; }
-        
+
+        public string CronExpression { get; set; }
+
         public bool IsExecutionGraphEmpty { get; set; }
 
         public Variable[] LocalVariables { get; set; }
 
-        public WorkflowInfo(string dbId, int id, Guid instanceId, string name, LaunchType launchType, bool isEnabled, bool isApproval, bool enableParallelJobs, bool isWaitingForApproval, string desc, bool isRunning, bool isPaused, string period, string cronExpression, bool isExecutionGraphEmpty, Variable[] localVariables)
+        public string StartedOn { get; set; }
+
+        public WorkflowInfo(string dbId, int id, Guid instanceId, string name, LaunchType launchType, bool isEnabled, bool isApproval, bool enableParallelJobs, bool isWaitingForApproval, string desc, bool isRunning, bool isPaused, string period, string cronExpression, bool isExecutionGraphEmpty, Variable[] localVariables, string startedOn)
         {
             DbId = dbId;
             Id = id;
@@ -62,6 +64,7 @@ namespace Wexflow.Server.Contracts
             CronExpression = cronExpression;
             IsExecutionGraphEmpty = isExecutionGraphEmpty;
             LocalVariables = localVariables;
+            StartedOn = startedOn;
         }
 
         public int CompareTo(object obj)

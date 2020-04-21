@@ -48,7 +48,19 @@ namespace Wexflow.Core
         /// <summary>
         /// SQLite
         /// </summary>
-        SQLite
+        SQLite,
+        /// <summary>
+        /// Firebird
+        /// </summary>
+        Firebird,
+        /// <summary>
+        /// Oracle
+        /// </summary>
+        Oracle,
+        /// <summary>
+        /// MariaDB
+        /// </summary>
+        MariaDB
     }
 
     /// <summary>
@@ -56,15 +68,6 @@ namespace Wexflow.Core
     /// </summary>
     public class WexflowEngine
     {
-        /// <summary>
-        /// Maximum retries of loading a workflow.
-        /// </summary>
-        public static int MaxRetries;
-        /// <summary>
-        /// Retry timeout.
-        /// </summary>
-        public static int RetryTimeout;
-
         /// <summary>
         /// Settings file path.
         /// </summary>
@@ -151,28 +154,37 @@ namespace Wexflow.Core
             switch (DbType)
             {
                 case DbType.CosmosDB:
-                    Database = new CosmosDB.Db(ConnectionString);
+                    Database = new Db.CosmosDB.Db(ConnectionString);
                     break;
                 case DbType.MongoDB:
-                    Database = new MongoDB.Db(ConnectionString);
+                    Database = new Db.MongoDB.Db(ConnectionString);
                     break;
                 case DbType.LiteDB:
-                    Database = new LiteDB.Db(ConnectionString);
+                    Database = new Db.LiteDB.Db(ConnectionString);
                     break;
                 case DbType.RavenDB:
-                    Database = new RavenDB.Db(ConnectionString);
+                    Database = new Db.RavenDB.Db(ConnectionString);
                     break;
                 case DbType.PostgreSQL:
-                    Database = new PostgreSQL.Db(ConnectionString);
+                    Database = new Db.PostgreSQL.Db(ConnectionString);
                     break;
                 case DbType.SQLServer:
-                    Database = new SQLServer.Db(ConnectionString);
+                    Database = new Db.SQLServer.Db(ConnectionString);
                     break;
                 case DbType.MySQL:
-                    Database = new MySQL.Db(ConnectionString);
+                    Database = new Db.MySQL.Db(ConnectionString);
                     break;
                 case DbType.SQLite:
-                    Database = new SQLite.Db(ConnectionString);
+                    Database = new Db.SQLite.Db(ConnectionString);
+                    break;
+                case DbType.Firebird:
+                    Database = new Db.Firebird.Db(ConnectionString);
+                    break;
+                case DbType.Oracle:
+                    Database = new Db.Oracle.Db(ConnectionString);
+                    break;
+                case DbType.MariaDB:
+                    Database = new Db.MariaDB.Db(ConnectionString);
                     break;
             }
 
@@ -212,8 +224,6 @@ namespace Wexflow.Core
             DbType = (DbType)Enum.Parse(typeof(DbType), GetWexflowSetting(xdoc, "dbType"), true);
             ConnectionString = GetWexflowSetting(xdoc, "connectionString");
             GlobalVariablesFile = GetWexflowSetting(xdoc, "globalVariablesFile");
-            MaxRetries = int.Parse(GetWexflowSetting(xdoc, "maxRetries"));
-            RetryTimeout = int.Parse(GetWexflowSetting(xdoc, "retryTimeout"));
         }
 
         private void LoadGlobalVariables()
@@ -251,14 +261,6 @@ namespace Wexflow.Core
 
         private void LoadWorkflows()
         {
-            // C:\Wexflow-dotnet-core\Workflows\prod\windows
-            // C:\Wexflow-dotnet-core\Workflows\prod\linux
-            // C:\Wexflow-dotnet-core\Workflows\prod\macos
-            //foreach (string file in Directory.GetFiles(@"C:\Wexflow-dotnet-core\Workflows\prod\windows"))
-            //{
-            //    Database.InsertWorkflow(new Db.Workflow { Xml = File.ReadAllText(file) });
-            //}
-
             var workflows = Database.GetWorkflows();
 
             foreach (var workflow in workflows)
@@ -691,6 +693,8 @@ namespace Wexflow.Core
                 Database.ClearStatusCount();
                 Database.ClearEntries();
             }
+
+            Database.Dispose();
         }
 
         /// <summary>
@@ -869,11 +873,11 @@ namespace Wexflow.Core
         }
 
         /// <summary>
-        /// Resumes a workflow.
+        /// Rejects a workflow.
         /// </summary>
         /// <param name="workflowId">Workflow Id.</param>
         /// <param name="instanceId">Job instance Id.</param>
-        public bool DisapproveWorkflow(int workflowId, Guid instanceId)
+        public bool RejectWorkflow(int workflowId, Guid instanceId)
         {
             try
             {
@@ -897,7 +901,7 @@ namespace Wexflow.Core
                         }
                         else
                         {
-                            innerWf.Disapprove();
+                            innerWf.Reject();
                             return true;
                         }
                     }

@@ -80,6 +80,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,20 +94,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <EmbeddedResource Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Wexflow.Core.Db.LiteDB\Wexflow.Core.Db.LiteDB.csproj">
+      <Project>{2bbb9f04-49d7-49a7-a065-4b2c81e66307}</Project>
+      <Name>Wexflow.Core.Db.LiteDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Wexflow.Core.Db\Wexflow.Core.Db.csproj">
       <Project>{ffe105a5-1c72-4e7d-bc48-5f5902376893}</Project>
       <Name>Wexflow.Core.Db</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Wexflow.Core.LiteDB\Wexflow.Core.LiteDB.csproj">
-      <Project>{2bbb9f04-49d7-49a7-a065-4b2c81e66307}</Project>
-      <Name>Wexflow.Core.LiteDB</Name>
     </ProjectReference>
     <ProjectReference Include="..\Wexflow.Scripts.Core\Wexflow.Scripts.Core.csproj">
       <Project>{61a3d5e0-6d95-43ee-bec5-2dc10771735f}</Project>
       <Name>Wexflow.Scripts.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Wexflow.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

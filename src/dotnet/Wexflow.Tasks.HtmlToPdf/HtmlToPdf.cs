@@ -1,11 +1,11 @@
-﻿using System;
-using Wexflow.Core;
-using System.Xml.Linq;
-using System.IO;
-using System.Threading;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
+using System;
+using System.IO;
+using System.Threading;
+using System.Xml.Linq;
+using Wexflow.Core;
 
 namespace Wexflow.Tasks.HtmlToPdf
 {
@@ -33,10 +33,12 @@ namespace Wexflow.Tasks.HtmlToPdf
                     {
                         string pdfPath = Path.Combine(Workflow.WorkflowTempFolder,
                             string.Format("{0}_{1:yyyy-MM-dd-HH-mm-ss-fff}.pdf", Path.GetFileNameWithoutExtension(file.FileName), DateTime.Now));
-                        
+
                         var doc = new Document();
                         PdfWriter.GetInstance(doc, new FileStream(pdfPath, FileMode.Create));
+#pragma warning disable CS0612
                         var worker = new HTMLWorker(doc);
+#pragma warning restore CS0612
                         doc.Open();
                         worker.StartDocument();
                         worker.Parse(new StreamReader(new FileStream(file.Path, FileMode.Open)));
@@ -44,24 +46,6 @@ namespace Wexflow.Tasks.HtmlToPdf
                         worker.Close();
                         // Close the document
                         doc.Close();
-
-                        /*IConverter converter =
-                            new ThreadSafeConverter(
-                                new PdfToolset(
-                                    new Win32EmbeddedDeployment(
-                                        new TempFolderDeployment())));
-
-                        var document = new HtmlToPdfDocument
-                        {
-                            Objects = {
-                                new ObjectSettings { HtmlText = File.ReadAllText(file.Path) }
-                            }
-                        };
-
-                        converter.Error += Converter_Error;
-
-                        byte[] result = converter.Convert(document);
-                        ByteArrayToFile(pdfPath, result);*/
 
                         Files.Add(new FileInf(pdfPath, Id));
                         InfoFormat("PDF {0} generated from the file {1}", pdfPath, file.Path);
@@ -77,7 +61,7 @@ namespace Wexflow.Tasks.HtmlToPdf
                         ErrorFormat("An error occured while generating the PDF of the file {0}", e, file.Path);
                         success = false;
                     }
-                }  
+                }
             }
 
             var status = Status.Success;

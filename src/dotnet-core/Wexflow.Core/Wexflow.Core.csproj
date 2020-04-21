@@ -5,12 +5,12 @@
 	<DebugType>Full</DebugType>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <PackageId>Wexflow</PackageId>
-    <Version>4.2.0</Version>
+    <Version>5.5.0</Version>
     <Authors>Akram El Assas</Authors>
     <Company>Wexflow</Company>
     <Product>Wexflow</Product>
     <Description>Core assembly of Wexflow workflow engine.</Description>
-    <Copyright>Copyright (c) 2019 Akram El Assas.</Copyright>
+    <Copyright>Copyright (c) 2020 Akram El Assas.</Copyright>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://wexflow.github.io</PackageProjectUrl>
     <RepositoryUrl>https://github.com/aelassas/Wexflow</RepositoryUrl>
@@ -39,21 +39,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wexflow.Core.CosmosDB\Wexflow.Core.CosmosDB.csproj" />
     <ProjectReference Include="..\Wexflow.Core.Db\Wexflow.Core.Db.csproj" />
-    <ProjectReference Include="..\Wexflow.Core.LiteDB\Wexflow.Core.LiteDB.csproj" />
-    <ProjectReference Include="..\Wexflow.Core.MongoDB\Wexflow.Core.MongoDB.csproj" />
-    <ProjectReference Include="..\Wexflow.Core.MySQL\Wexflow.Core.MySQL.csproj" />
-    <ProjectReference Include="..\Wexflow.Core.PostgreSQL\Wexflow.Core.PostgreSQL.csproj" />
-    <ProjectReference Include="..\Wexflow.Core.RavenDB\Wexflow.Core.RavenDB.csproj" />
-    <ProjectReference Include="..\Wexflow.Core.SQLite\Wexflow.Core.SQLite.csproj" />
-    <ProjectReference Include="..\Wexflow.Core.SQLServer\Wexflow.Core.SQLServer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Workflow.xsd">
-      <SubType>Designer</SubType>
-    </None>
+	<ProjectReference Include="..\Wexflow.Core.Db.CosmosDB\Wexflow.Core.Db.CosmosDB.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.Firebird\Wexflow.Core.Db.Firebird.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.LiteDB\Wexflow.Core.Db.LiteDB.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.MariaDB\Wexflow.Core.Db.MariaDB.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.MongoDB\Wexflow.Core.Db.MongoDB.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.MySQL\Wexflow.Core.Db.MySQL.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.Oracle\Wexflow.Core.Db.Oracle.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.PostgreSQL\Wexflow.Core.Db.PostgreSQL.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.RavenDB\Wexflow.Core.Db.RavenDB.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.SQLite\Wexflow.Core.Db.SQLite.csproj" />
+    <ProjectReference Include="..\Wexflow.Core.Db.SQLServer\Wexflow.Core.Db.SQLServer.csproj" />
   </ItemGroup>
 
 </Project>

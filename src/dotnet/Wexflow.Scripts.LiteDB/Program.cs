@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Configuration;
-using Wexflow.Core.LiteDB;
+using Wexflow.Core.Db.LiteDB;
 using Wexflow.Scripts.Core;
 
 namespace Wexflow.Scripts.LiteDB
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             try
             {
                 Db db = new Db(ConfigurationManager.AppSettings["connectionString"]);
                 Helper.InsertWorkflowsAndUser(db);
+                db.Dispose();
             }
             catch (Exception e)
             {

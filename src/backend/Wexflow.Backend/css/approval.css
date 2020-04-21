@@ -16,7 +16,7 @@
     height: 43px;
     background: #29A85C;
     color: #FFFFFF;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3);
 }
 
     #header a {
@@ -34,7 +34,7 @@
         float: right;
     }
 
-    #header #lnk-manager, #lnk-designer, #lnk-approval, #lnk-users, #lnk-profiles {
+    #header #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users, #lnk-profiles {
         display: none;
     }
 

@@ -35,17 +35,17 @@ function remove(key) {
 }
 
 function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
+    let d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toUTCString();
+    let expires = "expires=" + d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
 function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
+    let name = cname + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
         while (c.charAt(0) === ' ') {
             c = c.substring(1);
         }
@@ -57,9 +57,9 @@ function getCookie(cname) {
 }
 
 function isIE() {
-    ua = navigator.userAgent;
+    let ua = navigator.userAgent;
     /* MSIE used to detect old browsers and Trident used to newer ones*/
-    var is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
+    let is_ie = ua.indexOf("MSIE ") > -1 || ua.indexOf("Trident/") > -1;
 
     return is_ie;
 }

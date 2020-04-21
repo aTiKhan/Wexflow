@@ -1,52 +1,170 @@
-﻿<!DOCTYPE html>
-<html>
+﻿<html>
 <head>
     <meta charset="utf-8" />
     <title>Designer</title>
     <link rel="icon" href="images/logo.png" type="image/png">
 
-    <!--<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-toggle.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/vs2015.css" />
-    <link rel="stylesheet" type="text/css" href="css/jquery.toast.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/designer.css" />-->
+    <!--<link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/flowy.css" rel="stylesheet" />
+    <link href="css/jquery.toast.min.css" rel="stylesheet" />
+    <link href="css/jBox.all.min.css" rel="stylesheet" />
+    <link href="css/designer.css" rel="stylesheet" />-->
 
-    <link rel="stylesheet" type="text/css" href="css/designer.min.css" />
-
-    <script type="text/javascript" src="js/settings.js"></script>
-
-    <!--<script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery.toast.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap-toggle.min.js"></script>
-    <script type="text/javascript" src="js/common.js"></script>
-    <script type="text/javascript" src="js/authenticate.js"></script>
-    <script type="text/javascript" src="js/cytoscape-dagre.min.js"></script>
-    <script type="text/javascript" src="js/highlight.pack.js"></script>
-    <script type="text/javascript" src="js/ace.js"></script>
-    <script type="text/javascript" src="js/designer.js"></script>-->
-
-    <script type="text/javascript" src="js/ace.js"></script>
-    <script type="text/javascript" src="js/designer.min.js"></script>
+    <link href="css/designer.min.css" rel="stylesheet" />
 </head>
 <body>
     <div id="header">
-        <a href="dashboard.html">Dashboard</a>
-        <a id="lnk-manager" href="manager.html">Manager</a>
-        <a id="lnk-approval" href="approval.html">Approval</a>
-        <a id="lnk-designer" href="designer.html">Designer</a>
-        <a href="history.html">History</a>
-        <a id="lnk-users" href="users.html">Users</a>
-        <a id="lnk-profiles" href="profiles.html">Profiles</a>
+        <a id="lnk-dashboard" href="#">Dashboard</a>
+        <a id="lnk-manager" href="#">Manager</a>
+        <!--<a id="lnk-approval" href="approval.html">Approval</a>-->
+        <a id="lnk-designer" href="#" style="text-decoration: underline">Designer</a>
+        <!--<a id="lnk-editor" href="editor.html">Editor</a>-->
+        <a id="lnk-history" href="#">History</a>
+        <a id="lnk-users" href="#">Users</a>
+        <a id="lnk-profiles" href="#">Profiles</a>
         <a href="#" id="btn-logout" class="header-right">Logout</a>
-        <a href="https://wexflow.github.io" class="header-right">About</a>
-        <a href="https://github.com/aelassas/Wexflow/wiki" class="header-right">Help</a>
+        <a id="lnk-about" href="#" class="header-right">About</a>
+        <a id="lnk-help" href="#" class="header-right">Help</a>
     </div>
-	<div id="wf-designer"></div>
-	<script type="text/javascript">
-		window.onload = function () {
-			new WexflowDesigner();
-		};
-	</script>
+    <div id="navigation">
+        <div id="leftside">
+            <div id="details">
+                <div id="browse">Browse</div>
+            </div>
+        </div>
+        <div id="centerswitch">
+            <div id="leftswitch">Diagram</div>
+            <div id="graphswitch">Graph</div>
+            <div id="middleswitch">JSON</div>
+            <div id="rightswitch">XML</div>
+        </div>
+        <div id="buttonsright">
+            <div id="export">Export</div>
+            <div id="import">Import</div>
+            <div id="newworkflow">New Workflow</div>
+        </div>
+    </div>
+    <div id="leftcard">
+        <div id="closecard">
+            <img id="closecardimg" src="assets/openleft.png">
+        </div>
+        <div id="search">
+            <img src="assets/search.svg">
+            <input id="searchtasks" type="text" placeholder="Search tasks">
+        </div>
+        <div id="blocklist"></div>
+    </div>
+    <div id="propwrap">
+        <div id="properties">
+            <div id="close">
+                <img src="assets/close.svg">
+            </div>
+            <div id="header2"></div>
+            <div id="proplist">
+                <p class="inputlabel">Id</p>
+                <input id="taskid" class="form-control inputtext" type="text" />
+                <p class="inputlabel">Description</p><input id="taskdescription" class="form-control inputtext" type="text" />
+                <p class="inputlabel">Enabled</p>
+                <input id="taskenabled" class="inputtext" type="checkbox" checked />
+                <button type="button" class="wf-new-setting btn btn-secondary">New Setting</button>
+                <div id="task-settings">
+                    <table id="task-settings-table"></table>
+                </div>
+            </div>
+            <div id="divisionthing"></div>
+        </div>
+    </div>
+    <div id="wfclose">
+        <img id="wfcloseimg" src="assets/closeleft.png">
+    </div>
+    <div id="wfpropwrap">
+        <div id="wfproperties">
+            <p id="wfheader2">Workflow Settings <small id="savehelp">Ctrl+S to save.</small></p>
+            <div id="wfproplist">
+                <p class="inputlabel">Id</p>
+                <input id="wfid" class="form-control inputtext" type="text" />
+                <p class="inputlabel">Name</p>
+                <input id="wfname" class="form-control form-control inputtext" type="text" />
+                <p class="inputlabel">Description</p>
+                <input id="wfdesc" class="form-control inputtext" type="text" />
+                <p class="inputlabel">LaunchType</p>
+                <select id='wflaunchtype' class="form-control inputtext"><option value=''></option><option value='startup'>Startup</option><option value='trigger'>Trigger</option><option value='periodic'>Periodic</option>><option value='cron'>Cron</option></select>
+                <p class="inputlabel">Period</p>
+                <input id="wfperiod" class="form-control inputtext" type="text" />
+                <p class="inputlabel">Cron Expression</p>
+                <input id="wfcronexp" class="form-control inputtext" type="text" />
+                <p class="inputlabel">Enabled</p>
+                <input id='wfenabled' class="inputtext" type='checkbox' checked />
+                <p class="inputlabel">Approval</p>
+                <input id='wfapproval' class="inputtext" type='checkbox' />
+                <p class="inputlabel">EnableParallelJobs</p>
+                <input id='wfenablepj' class="inputtext" type='checkbox' checked />
+                <p class="inputlabel">
+                    Local Variables
+                    <input type="button" id="wf-add-var" value="New Variable" class="btn btn-secondary" />
+                </p>
+                <table class="wf-local-vars"></table>
+            </div>
+            <div id="removeblock">Delete Tasks</div>
+            <div id="removeworkflow">Delete Workflow</div>
+        </div>
+    </div>
+    <div id="canvas"></div>
+    <div id="code-container"><pre id='code'></pre></div>
+    <div id="browser"></div>
+    <div id="exportmodal">
+        <p>Choose export format:</p>
+        <select id="exporttype" class="form-control">
+            <option value="json" selected>JSON</option>
+            <option value="xml">XML</option>
+        </select>
+    </div>
+    <input id="filedialog" type="file" style="position: fixed; top: -100em" />
+    <div id="overlay">
+        <div id="onverlay-content">Loading...</div>
+    </div>
+
+    <div id="blocklyArea">
+        <div id="blocklyDiv"></div>
+        <xml id="toolbox" style="display: none">
+            <!--<category name="Sequential">
+              <block type="task"></block>
+            </category>
+            <category name="Flowchart">
+              <block type="if"></block>
+              <block type="while"></block>
+              <block type="case"></block>
+              <block type="switch"></block>
+            </category>
+            <category name="Events">
+              <block type="onSuccess"></block>
+              <block type="onWarning"></block>
+              <block type="onError"></block>
+              <block type="onRejected"></block>
+            </category>-->
+        </xml>
+    </div>
+    <!-- js scripts -->
+
+    <script type="text/javascript" src="js/settings.js"></script>
+
+    <!--<script src="js/jquery.min.js"></script>
+    <script src="js/jquery.toast.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/authenticate.js"></script>
+    <script src="js/flowy.js"></script>
+    <script src="js/ace.js"></script>
+    <script src="js/jBox.all.min.js"></script>
+    <script src="js/blockly_compressed.js"></script>
+    <script src="js/blocks_compressed.js"></script>
+    <script src="js/en.js"></script>
+    <script src="js/lodash.min.js"></script>
+    <script src="js/designer.js"></script>-->
+
+    <script src="js/blockly_compressed.js"></script>
+    <script src="js/blocks_compressed.js"></script>
+    <script src="js/en.js"></script>
+    <script src="js/ace.js"></script>
+    <script src="js/designer.min.js"></script>
 </body>
 </html>

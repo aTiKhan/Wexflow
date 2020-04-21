@@ -16,7 +16,8 @@
     var txtTo = document.getElementById("txt-to");
     var lnkManager = document.getElementById("lnk-manager");
     var lnkDesigner = document.getElementById("lnk-designer");
-    var lnkApproval = document.getElementById("lnk-approval");
+    //var lnkEditor = document.getElementById("lnk-editor");
+    //var lnkApproval = document.getElementById("lnk-approval");
     var lnkUsers = document.getElementById("lnk-users");
     var lnkProfiles = document.getElementById("lnk-profiles");
 
@@ -48,7 +49,8 @@
                     if (u.UserProfile === 0 || u.UserProfile === 1) {
                         lnkManager.style.display = "inline";
                         lnkDesigner.style.display = "inline";
-                        lnkApproval.style.display = "inline";
+                        //lnkEditor.style.display = "inline";
+                        //lnkApproval.style.display = "inline";
                         lnkUsers.style.display = "inline";
                     }
 
@@ -73,11 +75,11 @@
                                     from = new Date(dateMin);
                                     to = new Date(dateMax);
 
-                                    if (from.getDay() === to.getDay() &&
-                                        from.getMonth() === to.getMonth() &&
-                                        from.getYear() === to.getYear()) {
-                                        to.setDate(to.getDate() + 1);
-                                    }
+                                    //if (from.getDay() === to.getDay() &&
+                                    //    from.getMonth() === to.getMonth() &&
+                                    //    from.getYear() === to.getYear()) {
+                                    to.setDate(to.getDate() + 1);
+                                    //}
 
                                     Common.get(uri + "/historyEntriesCountByDate?s=" + encodeURIComponent(txtSearch.value) + "&from=" + from.getTime() + "&to=" + to.getTime(),
                                         function (count) {
@@ -245,7 +247,6 @@
                 var table = "<table id='entries-table' class='table'>"
                     + "<thead class='thead-dark'>"
                     + "<tr>"
-
                     + "<th id='th-status' class='status'>Status</th>"
                     + "<th id='th-date' class='date'>Date 🔻</th>"
                     + "<th id='th-id' class='id'>Id</th>"
@@ -262,7 +263,25 @@
                 document.getElementById("entries").innerHTML = table;
 
                 var entriesTable = document.getElementById("entries-table");
-                var rows = (entriesTable.getElementsByTagName("tbody")[0]).getElementsByTagName("tr");
+
+                entriesTable.getElementsByTagName("tbody")[0].style.height = (document.getElementById("entries").offsetHeight - 35) + "px";
+
+                var rows = entriesTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+                if (rows.length > 0) {
+                    var hrow = entriesTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+                    hrow.querySelector(".status").style.width = rows[0].querySelector(".status").offsetWidth + "px";
+                    hrow.querySelector(".date").style.width = rows[0].querySelector(".date").offsetWidth + "px";
+                    hrow.querySelector(".id").style.width = rows[0].querySelector(".id").offsetWidth + "px";
+                    hrow.querySelector(".name").style.width = rows[0].querySelector(".name").offsetWidth + "px";
+                    hrow.querySelector(".lt").style.width = rows[0].querySelector(".lt").offsetWidth + "px";
+                    hrow.querySelector(".desc").style.width = rows[0].querySelector(".desc").offsetWidth + "px";
+                }
+
+                var descriptions = entriesTable.querySelectorAll(".desc");
+                for (i = 0; i < descriptions.length; i++) {
+                    descriptions[i].style.width = entriesTable.offsetWidth - 600 + "px";
+                }
+
                 for (i = 0; i < rows.length; i++) {
                     rows[i].onclick = function () {
                         var selected = document.getElementsByClassName("selected");
