@@ -1,62 +1,96 @@
 ﻿function Users() {
     "use strict";
 
-    var uri = Common.trimEnd(Settings.Uri, "/");
-    var lnkManager = document.getElementById("lnk-manager");
-    var lnkDesigner = document.getElementById("lnk-designer");
-    //var lnkEditor = document.getElementById("lnk-editor");
-    //var lnkApproval = document.getElementById("lnk-approval");
-    var lnkUsers = document.getElementById("lnk-users");
-    var lnkProfiles = document.getElementById("lnk-profiles");
-    var divUsers = document.getElementById("users");
-    var divUsersTable = document.getElementById("users-table");
-    var divUserActions = document.getElementById("user-actions");
-    var divUserProfile = document.getElementById("user-profile");
-    var slctProfile = document.getElementById("slct-profile");
-    var oldPasswordText = document.getElementById("old-password-text");
-    var newPasswordText = document.getElementById("new-password-text");
-    var confirmPasswordText = document.getElementById("confirm-password-text");
-    var deleteAction = document.getElementById("delete-action");
-    var saveAction = document.getElementById("save-action");
-    var newUserAction = document.getElementById("new-user-action");
-    var btnLogout = document.getElementById("btn-logout");
-    var oldPasswordTr = document.getElementById("old-password-tr");
-    var newPasswordTr = document.getElementById("new-password-tr");
-    var confirmPasswordTr = document.getElementById("confirm-password-tr");
-    var lblNewPassword = document.getElementById("lbl-new-password");
-    var txtUsername = document.getElementById("username-text");
-    var changePass = document.getElementById("change-password");
-    var emailText = document.getElementById("email-text");
-    var txtId = document.getElementById("txt-id");
-    var txtCreatedOn = document.getElementById("txt-createdOn");
-    var txtModifiedOn = document.getElementById("txt-modifiedOn");
-    var trId = document.getElementById("tr-id");
-    var trCreatedOn = document.getElementById("tr-createdOn");
-    var trModifiedOn = document.getElementById("tr-modifiedOn");
-    var txtSearch = document.getElementById("users-search-text");
-    var btnSearch = document.getElementById("users-search-action");
-    var selectedUsername;
-    var selectedUsernameTd;
-    var selectedUserId;
-    var selectedUserProfile;
-    var selectedUserProfileTd;
-    var logedinUser;
-    var logedinUserProfile;
-    var newUser = false;
-    var changePassword = false;
-    var selectedTr;
-    var uo = 0;
-    var thUsername;
-    var qusername = "";
-    var qpassword = "";
-    var auth = "";
+    let updateLanguage = function (language) {
+        document.getElementById("lnk-records").innerHTML = language.get("lnk-records");
+        document.getElementById("lnk-approval").innerHTML = language.get("lnk-approval");
 
-    var suser = getUser();
+        document.getElementById("lnk-dashboard").innerHTML = language.get("lnk-dashboard");
+        document.getElementById("lnk-manager").innerHTML = language.get("lnk-manager");
+        document.getElementById("lnk-designer").innerHTML = language.get("lnk-designer");
+        document.getElementById("lnk-history").innerHTML = language.get("lnk-history");
+        document.getElementById("lnk-users").innerHTML = language.get("lnk-users");
+        document.getElementById("lnk-profiles").innerHTML = language.get("lnk-profiles");
+        document.getElementById("spn-logout").innerHTML = language.get("spn-logout");
+
+        document.getElementById("users-search-action").value = language.get("btn-search");
+        document.getElementById("new-user-action").value = language.get("new-user-action");
+        document.getElementById("save-action").value = language.get("save-action");
+        document.getElementById("delete-action").value = language.get("delete-action");
+        document.getElementById("tr-createdOn-label").innerHTML = language.get("tr-createdOn-label");
+        document.getElementById("tr-modifiedOn-label").innerHTML = language.get("tr-modifiedOn-label");
+        document.getElementById("username-text-label").innerHTML = language.get("username");
+        document.getElementById("userprofile-slct-label").innerHTML = language.get("userprofile-slct-label");
+        document.getElementById("email-text-label").innerHTML = language.get("email-text-label");
+        document.getElementById("change-password").innerHTML = language.get("change-password");
+        document.getElementById("old-password-text-label").innerHTML = language.get("old-password-text-label");
+        document.getElementById("lbl-new-password").innerHTML = language.get("lbl-new-password");
+        document.getElementById("confirm-password-text-label").innerHTML = language.get("confirm-password-text-label");
+    };
+
+    let language = new Language("lang", updateLanguage);
+    language.init();
+
+    let uri = Common.trimEnd(Settings.Uri, "/");
+
+    let lnkRecords = document.getElementById("lnk-records");
+    let lnkManager = document.getElementById("lnk-manager");
+    let lnkDesigner = document.getElementById("lnk-designer");
+    let lnkApproval = document.getElementById("lnk-approval");
+    let lnkUsers = document.getElementById("lnk-users");
+    let lnkProfiles = document.getElementById("lnk-profiles");
+    let lnkNotifications = document.getElementById("lnk-notifications");
+    let imgNotifications = document.getElementById("img-notifications");
+
+    let divUsers = document.getElementById("users");
+    let divUsersTable = document.getElementById("users-table");
+    let divUserActions = document.getElementById("user-actions");
+    let divUserProfile = document.getElementById("user-profile");
+    let slctProfile = document.getElementById("slct-profile");
+    let oldPasswordText = document.getElementById("old-password-text");
+    let newPasswordText = document.getElementById("new-password-text");
+    let confirmPasswordText = document.getElementById("confirm-password-text");
+    let deleteAction = document.getElementById("delete-action");
+    let saveAction = document.getElementById("save-action");
+    let newUserAction = document.getElementById("new-user-action");
+    let btnLogout = document.getElementById("btn-logout");
+    let oldPasswordTr = document.getElementById("old-password-tr");
+    let newPasswordTr = document.getElementById("new-password-tr");
+    let confirmPasswordTr = document.getElementById("confirm-password-tr");
+    let lblNewPassword = document.getElementById("lbl-new-password");
+    let txtUsername = document.getElementById("username-text");
+    let changePass = document.getElementById("change-password");
+    let emailText = document.getElementById("email-text");
+    let txtId = document.getElementById("txt-id");
+    let txtCreatedOn = document.getElementById("txt-createdOn");
+    let txtModifiedOn = document.getElementById("txt-modifiedOn");
+    let trId = document.getElementById("tr-id");
+    let trCreatedOn = document.getElementById("tr-createdOn");
+    let trModifiedOn = document.getElementById("tr-modifiedOn");
+    let txtSearch = document.getElementById("users-search-text");
+    let btnSearch = document.getElementById("users-search-action");
+    let selectedUsername;
+    let selectedUsernameTd;
+    let selectedUserId;
+    let selectedUserProfile;
+    let selectedUserProfileTd;
+    let logedinUser;
+    let logedinUserProfile;
+    let newUser = false;
+    let changePassword = false;
+    let selectedTr;
+    let uo = 0;
+    let thUsername;
+    let qusername = "";
+    let qpassword = "";
+    let auth = "";
+
+    let suser = getUser();
 
     if (suser === null || suser === "") {
         Common.redirectToLoginPage();
     } else {
-        var user = JSON.parse(suser);
+        let user = JSON.parse(suser);
 
         qusername = user.Username;
         qpassword = user.Password;
@@ -67,39 +101,49 @@
                 if (user.Password !== u.Password) {
                     Common.redirectToLoginPage();
                 } else if (u.UserProfile === 0 || u.UserProfile === 1) {
-                    logedinUser = u.Username;
-                    logedinUserProfile = u.UserProfile;
 
-                    divUsers.style.display = "block";
-                    lnkManager.style.display = "inline";
-                    lnkDesigner.style.display = "inline";
-                    //lnkEditor.style.display = "inline";
-                    //lnkApproval.style.display = "inline";
-                    lnkUsers.style.display = "inline";
+                    Common.get(uri + "/hasNotifications?a=" + encodeURIComponent(user.Username), function (hasNotifications) {
 
-                    if (u.UserProfile === 0) {
-                        lnkProfiles.style.display = "inline";
-                    }
+                        logedinUser = u.Username;
+                        logedinUserProfile = u.UserProfile;
 
-                    btnLogout.innerHTML = "Logout (" + u.Username + ")";
+                        divUsers.style.display = "block";
+                        lnkRecords.style.display = "inline";
+                        lnkManager.style.display = "inline";
+                        lnkDesigner.style.display = "inline";
+                        lnkApproval.style.display = "inline";
+                        lnkUsers.style.display = "inline";
+                        lnkNotifications.style.display = "inline";
 
-                    btnLogout.onclick = function () {
-                        deleteUser();
-                        Common.redirectToLoginPage();
-                    };
+                        if (u.UserProfile === 0) {
+                            lnkProfiles.style.display = "inline";
+                        }
 
-                    if (u.UserProfile === 1) {
-                        newUserAction.style.display = "none";
-                    }
+                        if (hasNotifications === true) {
+                            imgNotifications.src = "images/notification-active.png";
+                        } else {
+                            imgNotifications.src = "images/notification.png";
+                        }
 
-                    loadUsers();
+                        document.getElementById("spn-username").innerHTML = " (" + u.Username + ")";
 
+                        btnLogout.onclick = function () {
+                            deleteUser();
+                            Common.redirectToLoginPage();
+                        };
+
+                        if (u.UserProfile === 1) {
+                            newUserAction.style.display = "none";
+                        }
+
+                        loadUsers();
+
+                    }, function () { }, auth);
                 } else {
                     Common.redirectToLoginPage();
                 }
 
-            },
-            function () { }, auth);
+            }, function () { }, auth);
     }
 
     btnSearch.onclick = function () {
@@ -117,10 +161,10 @@
         Common.get(uri + "/searchUsers?keyword=" + encodeURIComponent(txtSearch.value) + "&uo=" + uo,
             function (data) {
 
-                var items = [];
-                for (var i = 0; i < data.length; i++) {
-                    var val = data[i];
-                    var tr;
+                let items = [];
+                for (let i = 0; i < data.length; i++) {
+                    let val = data[i];
+                    let tr;
 
                     if (usernameToSelect === val.Username) {
                         tr = "<tr class='selected'>";
@@ -137,7 +181,7 @@
                     );
                 }
 
-                var table = "<table id='wf-users-table' class='table'>"
+                let table = "<table id='wf-users-table' class='table'>"
                     + "<thead class='thead-dark'>"
                     + "<tr>"
                     + "<th id='th-id' class='userid'>Id</th>"
@@ -152,19 +196,19 @@
 
                 divUsersTable.innerHTML = table;
 
-                var usersTable = document.getElementById("wf-users-table");
+                let usersTable = document.getElementById("wf-users-table");
 
                 usersTable.getElementsByTagName("tbody")[0].style.height = (divUsersTable.offsetHeight - 35) + "px";
 
-                var rows = usersTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+                let rows = usersTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
                 if (rows.length > 0) {
-                    var hrow = usersTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+                    let hrow = usersTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
                     hrow.querySelector(".username").style.width = rows[0].querySelector(".username").offsetWidth + "px";
                     hrow.querySelector(".userprofile").style.width = rows[0].querySelector(".userprofile").offsetWidth + "px";
                 }
 
-                var profiles = usersTable.querySelectorAll(".userprofile");
-                for (i = 0; i < profiles.length; i++) {
+                let profiles = usersTable.querySelectorAll(".userprofile");
+                for (let i = 0; i < profiles.length; i++) {
                     profiles[i].style.width = usersTable.offsetWidth - 60 + "px";
                 }
 
@@ -185,21 +229,21 @@
                 }
 
                 // set selectedUsernameTd
-                var selected = document.getElementsByClassName("selected");
+                let selected = document.getElementsByClassName("selected");
                 if (selected.length > 0) {
                     selectedTr = selected[0];
                     selectedUsernameTd = selectedTr.getElementsByClassName("username")[0];
                     selectedUserProfileTd = selectedTr.getElementsByClassName("userprofile")[0];
                 }
 
-                for (var j = 0; j < rows.length; j++) {
+                for (let j = 0; j < rows.length; j++) {
 
-                    var row = rows[j];
+                    let row = rows[j];
                     if (scroll === true) {
-                        var userIdTd = row.getElementsByClassName("userid")[0];
+                        let userIdTd = row.getElementsByClassName("userid")[0];
 
                         if (typeof userIdTd !== "undefined" && userIdTd !== null) {
-                            var userId = userIdTd.innerHTML;
+                            let userId = userIdTd.innerHTML;
                             if (userId === selectedUserId) {
                                 row.scrollIntoView(true);
                             }
@@ -208,7 +252,7 @@
                     }
 
                     row.onclick = function () {
-                        var selected = document.getElementsByClassName("selected");
+                        let selected = document.getElementsByClassName("selected");
                         if (selected.length > 0) {
                             selectedTr = selected[0];
                             selectedTr.className = selectedTr.className.replace("selected", "");
@@ -236,7 +280,7 @@
                             //lblNewPassword.innerHTML = "Password";
                             changePass.style.display = "none";
                         } else {
-                            lblNewPassword.innerHTML = "New password";
+                            lblNewPassword.innerHTML = language.get("lbl-new-password");
                         }
 
                         newUser = false;
@@ -328,6 +372,7 @@
                     saveAction.style.display = "none";
                 } if (u.Username === logedinUser && u.UserProfile === 0) {
                     saveAction.style.display = "block";
+                    emailText.disabled = false;
                 } else if (logedinUserProfile === 0 && u.Username !== logedinUser && (u.UserProfile === 1 || u.UserProfile === 2)) {
                     txtUsername.disabled = false;
                     emailText.disabled = false;
@@ -372,7 +417,7 @@
 
         txtUsername.disabled = false;
         oldPasswordTr.style.display = "none";
-        lblNewPassword.innerHTML = "Password";
+        lblNewPassword.innerHTML = language.get("password");
         txtUsername.value = "";
         slctProfile.disabled = false;
         slctProfile.value = -1;
@@ -407,7 +452,7 @@
     };
 
     deleteAction.onclick = function () {
-        var r = confirm("Are you sure you want to delete this user?");
+        let r = confirm(language.get("confirm-user-delete"));
 
         if (r === true) {
             if (selectedUsername !== logedinUser) {
@@ -417,12 +462,12 @@
                         Common.post(uri + "/deleteUser?username=" + encodeURIComponent(selectedUsername) + "&password=" + encodeURIComponent(u.Password),
                             function (val) {
                                 if (val === true) {
-                                    Common.toastSuccess("The user " + selectedUsername + " was deleted with success.");
+                                    Common.toastSuccess(language.get("toast-user-deleted"));
                                     loadUsers();
                                     divUserActions.style.display = "none";
                                     divUserProfile.style.display = "none";
                                 } else {
-                                    Common.toastError("An error occured while deleting the user " + selectedUsername + ".");
+                                    Common.toastError(language.get("toast-user-delete-error"));
                                 }
                             },
                             function () { }, "", auth);
@@ -450,34 +495,34 @@
     function save() {
         if (newUser === true) {
 
-            var username = txtUsername.value;
-            var up = parseInt(getSelectedProfile());
-            var password = newPasswordText.value;
-            var confirmedPassword = confirmPasswordText.value;
+            let username = txtUsername.value;
+            let up = parseInt(getSelectedProfile());
+            let password = newPasswordText.value;
+            let confirmedPassword = confirmPasswordText.value;
 
             if (username === "") {
-                Common.toastInfo("Type a username.");
+                Common.toastInfo(language.get("toast-username"));
             } else {
                 Common.get(uri + "/user?username=" + encodeURIComponent(username),
                     function (u) {
                         if (typeof u === "undefined") {
                             if (up === -1) {
-                                Common.toastInfo("Choose a user profile for this user.");
+                                Common.toastInfo(language.get("toast-userprofile"));
                             } else {
                                 if (password === "" || confirmedPassword === "") {
-                                    Common.toastInfo("Type a password.");
+                                    Common.toastInfo(language.get("toast-password"));
                                 } else {
                                     if (password !== confirmedPassword) {
-                                        Common.toastInfo("Passwords don't match.");
+                                        Common.toastInfo(language.get("toast-password-error"));
                                     } else if (emailText.value === "" || validateEmail(emailText.value) === false) {
-                                        Common.toastInfo("Enter a valid email address.");
+                                        Common.toastInfo(language.get("toast-email-error"));
                                     } else {
-                                        var hashedPass = MD5(password);
+                                        let hashedPass = MD5(password);
                                         Common.post(
                                             uri + "/insertUser?username=" + encodeURIComponent(username) + "&password=" + hashedPass + "&up=" + up + "&email=" + encodeURIComponent(emailText.value),
                                             function (val) {
                                                 if (val === true) {
-                                                    Common.toastSuccess("The user " + username + " was created with success.");
+                                                    Common.toastSuccess(language.get("toast-user-created"));
 
                                                     Common.get(uri + "/user?username=" + encodeURIComponent(username),
                                                         function (user) {
@@ -513,7 +558,7 @@
                                                         function () { }, auth);
 
                                                 } else {
-                                                    Common.toastError("An error occured while creating the user " + username + ".");
+                                                    Common.toastError(language.get("toast-user-create-error"));
                                                 }
                                             },
                                             function () { }, "", auth);
@@ -522,7 +567,7 @@
 
                             }
                         } else {
-                            Common.toastInfo("A user with this name already exists. Type another username.");
+                            Common.toastInfo(language.get("toast-username-exists"));
                         }
 
                     },
@@ -530,30 +575,30 @@
             }
 
         } else {
-            var up2 = parseInt(getSelectedProfile());
+            let up2 = parseInt(getSelectedProfile());
             if (changePassword === false) {
                 if (txtUsername.value === "") {
-                    Common.toastInfo("Enter a username.");
+                    Common.toastInfo(language.get("toast-username"));
                 } else if (emailText.value === "" || validateEmail(emailText.value) === false) {
-                    Common.toastInfo("Enter a valid email address.");
+                    Common.toastInfo(language.get("toast-email-error"));
                 } else if (up2 === -1) {
-                    Common.toastInfo("Choose a user profile for this user.");
+                    Common.toastInfo(language.get("toast-userprofile"));
                 } else {
                     Common.get(uri + "/user?username=" + encodeURIComponent(txtUsername.value),
                         function (u) {
                             if (typeof u !== "undefined" && u !== null && u.Username !== selectedUsername) {
-                                Common.toastInfo("The user " + txtUsername.value + " already exists. Choose another username.");
+                                Common.toastInfo(language.get("toast-username-exists"));
                             } else {
 
                                 if (selectedUsername !== logedinUser && selectedUserProfile === 0) {
 
                                     if (newPasswordText.value === "") {
-                                        Common.toastInfo("Type the password of this user.");
+                                        Common.toastInfo(language.get("toast-password"));
                                     } else {
-                                        var pass = MD5(newPasswordText.value);
+                                        let pass = MD5(newPasswordText.value);
 
                                         if (pass !== u.Password) {
-                                            Common.toastInfo("The password is incorrect.");
+                                            Common.toastInfo(language.get("toast-password-incorrect"));
                                         } else {
                                             updateUsernameAndPassword();
                                         }
@@ -573,32 +618,32 @@
             } else {
                 Common.get(uri + "/user?username=" + encodeURIComponent(selectedUsername),
                     function (u) {
-                        var oldPassword = MD5(oldPasswordText.value);
+                        let oldPassword = MD5(oldPasswordText.value);
                         if (u.UserProfile === 0 && u.Password !== oldPassword) {
-                            Common.toastInfo("The old password is not valid.");
+                            Common.toastInfo(language.get("toast-old-password-incorrect"));
                         } else {
 
                             if (newPasswordText.value !== confirmPasswordText.value) {
-                                Common.toastInfo("New passwords don't match.");
+                                Common.toastInfo(language.get("toast-new-password-error"));
                             } else if (newPasswordText.value === "" || confirmPasswordText.value === "") {
-                                Common.toastInfo("Enter a new password.");
+                                Common.toastInfo(language.get("toast-new-password"));
                             } else {
-                                var newPassword = MD5(newPasswordText.value);
-                                var up = getSelectedProfile();
+                                let newPassword = MD5(newPasswordText.value);
+                                let up = getSelectedProfile();
 
                                 if (txtUsername.value === "") {
-                                    Common.toastInfo("Enter a username.");
+                                    Common.toastInfo(language.get("toast-username"));
                                 } else if (emailText.value === "" || validateEmail(emailText.value) === false) {
-                                    Common.toastInfo("Enter a valid email address.");
+                                    Common.toastInfo(language.get("toast-email-error"));
                                 } else if (up === -1) {
-                                    Common.toastInfo("Choose a user profile for this user.");
+                                    Common.toastInfo(language.get("toast-userprofile"));
                                 } else {
                                     Common.get(uri + "/user?username=" + encodeURIComponent(txtUsername.value),
                                         function (u) {
                                             if (typeof u !== "undefined" &&
                                                 u !== null &&
                                                 u.Username !== selectedUsername) {
-                                                Common.toastInfo("The user " + txtUsername.value + " already exists. Choose another username.");
+                                                Common.toastInfo(language.get("toast-username-exists"));
                                             } else {
 
                                                 Common.post(uri + "/updateUser?userId=" + selectedUserId + "&username=" + encodeURIComponent(txtUsername.value) + "&password=" + encodeURIComponent(newPassword) + "&up=" + up + "&email=" + encodeURIComponent(emailText.value),
@@ -641,11 +686,11 @@
                                                                         changePass.style.display = "none";
                                                                     }
 
-                                                                    Common.toastSuccess("The user " + txtUsername.value + " was updated with success.");
+                                                                    Common.toastSuccess(language.get("toast-user-updated"));
                                                                 },
                                                                 function () { }, auth);
                                                         } else {
-                                                            Common.toastError("An error occured while updating the user " + txtUsername.value + ".");
+                                                            Common.toastError(language.get("toast-user-update-error"));
                                                         }
                                                     },
                                                     function () { }, "", auth);
@@ -666,7 +711,7 @@
     }
 
     function updateUsernameAndPassword() {
-        var up = parseInt(getSelectedProfile());
+        let up = parseInt(getSelectedProfile());
 
         Common.post(uri + "/updateUsernameAndEmailAndUserProfile?userId=" + selectedUserId + "&username=" + encodeURIComponent(txtUsername.value) + "&email=" + encodeURIComponent(emailText.value) + "&up=" + up,
             function (val) {
@@ -675,13 +720,14 @@
                         function (user) {
                             if (logedinUser === selectedUsername) {
                                 qpassword = user.Password;
-                                btnLogout.innerHTML = "Logout (" + txtUsername.value + ")";
+                                //btnLogout.innerHTML = "Logout (" + txtUsername.value + ")";
+                                document.getElementById("spn-username").innerHTML = " (" + txtUsername.Username + ")";
 
                                 deleteUser();
                                 authorize(txtUsername.value, user.Password, user.UserProfile);
 
                             }
-                            Common.toastSuccess("The user " + txtUsername.value + " was updated with success.");
+                            Common.toastSuccess(language.get("toast-user-updated"));
                             selectedUsernameTd.innerHTML = txtUsername.value;
                             selectedUserProfileTd.innerHTML = userProfileToText(user.UserProfile);
 
@@ -714,7 +760,7 @@
                         },
                         function () { }, auth);
                 } else {
-                    Common.toastError("An error occured while updating the user " + txtUsername.value + ".");
+                    Common.toastError(language.get("toast-user-update-error"));
                 }
             },
             function () { }, "", auth);
@@ -725,7 +771,7 @@
     }
 
     function validateEmail(email) {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
     }
 

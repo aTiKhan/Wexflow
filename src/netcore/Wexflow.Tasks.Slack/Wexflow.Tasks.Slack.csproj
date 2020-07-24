@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+	<DebugType>Full</DebugType>
+    <Platforms>AnyCPU;x64;x86</Platforms> 
+    <Version>5.8.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Slack.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Slack.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SlackAPI" Version="1.1.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wexflow.Core\Wexflow.Core.csproj" />
+  </ItemGroup>
+
+</Project>

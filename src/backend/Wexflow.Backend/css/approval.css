@@ -2,6 +2,7 @@
     background: #FFFFFF;
     font-family: Helvetica, Arial, sans-serif;
     font-size: 12px;
+    overflow: hidden;
 }
 
 .jq-toast-single {
@@ -34,22 +35,46 @@
         float: right;
     }
 
-    #header #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users, #lnk-profiles {
+    #header #lnk-records, #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users, #lnk-profiles, #lnk-notifications {
         display: none;
     }
 
+/*lang*/
+#lang {
+    margin-top: 10px;
+    margin-right: 20px;
+    color: #000;
+}
 
-#wf-approval{
-	position: absolute; 
-	top: 45px; 
-	right:0; 
-	bottom:0; 
-	left:0;
+    #lang .lang {
+        cursor: pointer;
+        padding-right: 3px;
+        padding-left: 3px;
+    }
+
+        #lang .lang:hover {
+            opacity: .8;
+        }
+
+.dropdown-menu {
+    min-width: 90px;
+}
+
+#lnk-notifications {
+    margin: 0 !important;
+    margin-top: 10px !important;
+}
+
+#wf-approval {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    bottom: 0;
+    left: 0;
     display: none;
 }
 
-#wf-container
-{
+#wf-container {
     position: relative;
     min-width: 600px;
     min-height: 400px;
@@ -57,43 +82,41 @@
     height: 100%;
 }
 
-#wf-cmd
-{
+#wf-cmd {
     position: absolute;
     top: 10px;
     right: 10px;
 }
-#wf-cmd button
-{
-    margin-right: 5px;
-    width: 70px;
-}
 
-#wf-notifier
-{
+    #wf-cmd button {
+        margin-right: 5px;
+        width: 70px;
+    }
+
+#wf-notifier {
     position: absolute;
-    top: 50px;
-    right: 10px;
+    top: 10px;
+    right: 470px;
     left: 10px;
 }
 
-#wf-notifier #wf-notifier-text
-{
-    width: 100%;
-}
+    #wf-notifier #wf-notifier-text {
+        width: 100%;
+    }
 
 #wf-search {
     position: absolute;
-    top: 90px;
-    right: 10px;
+    top: 40px;
+    right: 14px;
     left: 10px;
 }
 
     #wf-search #wf-search-text-container {
         position: absolute;
-        right: 75px;
+        right: 79px;
         left: 0;
     }
+
         #wf-search #wf-search-text-container #wf-search-text {
             width: 100%;
         }
@@ -101,57 +124,126 @@
     #wf-search #wf-search-action {
         position: absolute;
         right: 0px;
-        width: 70px;
+        width: 74px;
     }
 
+/* workflows */
 #wf-workflows {
     position: absolute;
-    top: 125px;
+    top: 250px;
     bottom: 0;
     right: 10px;
     left: 10px;
-    overflow: auto;
 }
 
-/* start of table style */
+    #wf-workflows #wf-workflows-table {
+        display: block;
+        table-layout: fixed;
+        margin: 0;
+    }
 
-#wf-workflows .thead-dark {
-    background: #272727;
-    color: #EEEEEE;
+    #wf-workflows thead, tbody {
+        display: block;
+    }
+
+    #wf-workflows tbody {
+        height: calc(100% - 40px);
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+
+    #wf-workflows .thead-dark {
+        background: #272727;
+        color: #EEEEEE;
+    }
+
+    #wf-workflows tbody tr:hover {
+        background: #EEEEEE;
+    }
+
+    #wf-workflows #wf-workflows-table .wf-id {
+        width: 45px;
+    }
+
+    #wf-workflows #wf-workflows-table .wf-n {
+        width: 200px;
+    }
+
+    #wf-workflows #wf-workflows-table .wf-lt {
+        width: 100px;
+    }
+
+    #wf-workflows #wf-workflows-table .wf-e {
+        width: 75px;
+    }
+
+    #wf-workflows #wf-workflows-table .wf-a {
+        width: 75px;
+    }
+
+    #wf-workflows #wf-workflows-table tbody tr:hover {
+        cursor: pointer;
+    }
+
+    #wf-workflows #wf-workflows-table .selected, #wf-workflows #wf-workflows-table .selected:hover {
+        background-color: #ffb347;
+    }
+
+/* jobs */
+
+#wf-jobs {
+    position: absolute;
+    top: 75px;
+    bottom: calc(100% - 250px);
+    right: 10px;
+    left: 10px;
+    overflow: hidden;
 }
 
-#wf-workflows tbody tr:hover{
-    background: #EEEEEE;
-}
+    #wf-jobs #wf-jobs-table {
+        display: block;
+        table-layout: fixed;
+        margin: 0;
+    }
 
-#wf-workflows #wf-workflows-table .wf-id
-{
-    width: 45px;    
-}
+    #wf-jobs thead, tbody {
+        display: block;
+    }
 
-#wf-workflows #wf-workflows-table .wf-n
-{
-    width: 200px;    
-}
+    #wf-jobs tbody {
+        overflow-y: auto;
+        overflow-x: auto;
+    }
 
-#wf-workflows #wf-workflows-table .wf-lt
-{
-    width: 100px;    
-}
+    #wf-jobs .thead-dark {
+        background: #272727;
+        color: #EEEEEE;
+    }
 
-#wf-workflows #wf-workflows-table .wf-e
-{
-    width: 75px;
-}
+    #wf-jobs tbody tr:hover {
+        background: #EEEEEE;
+    }
 
-#wf-workflows #wf-workflows-table tbody tr:hover
-{
-    cursor: pointer;
-}
+    #wf-jobs #wf-jobs-table .wf-jobId {
+        width: 320px;
+    }
 
-#wf-workflows #wf-workflows-table .selected, #wf-workflows #wf-workflows-table .selected:hover
-{
-    background-color: #ffb347;
-}
+    #wf-jobs #wf-jobs-table .wf-n {
+        width: 200px;
+    }
 
-/*end of table style*/
+    #wf-jobs #wf-jobs-table .wf-d {
+        width: 500px;
+    }
+
+    #wf-jobs #wf-jobs-table .wf-startedOn {
+        width: 200px;
+    }
+
+    #wf-jobs #wf-jobs-table tbody tr:hover {
+        cursor: pointer;
+    }
+
+    #wf-jobs #wf-jobs-table .selected, #wf-jobs #wf-jobs-table .selected:hover {
+        background-color: #ffb347;
+    }

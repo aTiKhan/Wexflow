@@ -15,16 +15,16 @@
 <body>
     <div id="header">
         <a id="lnk-dashboard" href="#">Dashboard</a>
+        <a id="lnk-records" href="#">Records</a>
         <a id="lnk-manager" href="#">Manager</a>
-        <!--<a id="lnk-approval" href="approval.html">Approval</a>-->
+        <a id="lnk-approval" href="#">Approval</a>
         <a id="lnk-designer" href="#" style="text-decoration: underline">Designer</a>
-        <!--<a id="lnk-editor" href="editor.html">Editor</a>-->
         <a id="lnk-history" href="#">History</a>
         <a id="lnk-users" href="#">Users</a>
         <a id="lnk-profiles" href="#">Profiles</a>
-        <a href="#" id="btn-logout" class="header-right">Logout</a>
-        <a id="lnk-about" href="#" class="header-right">About</a>
-        <a id="lnk-help" href="#" class="header-right">Help</a>
+        <div id="lang" class="header-right"></div>
+        <a href="#" id="btn-logout" class="header-right"><span id="spn-logout">Logout</span><span id="spn-username"></span></a>
+        <a id="lnk-notifications" href="#" class="header-right"><img id="img-notifications" src="images/notification.png" /></a>
     </div>
     <div id="navigation">
         <div id="leftside">
@@ -50,7 +50,7 @@
         </div>
         <div id="search">
             <img src="assets/search.svg">
-            <input id="searchtasks" type="text" placeholder="Search tasks">
+            <input id="searchtasks" type="text" autocomplete="off" placeholder="Search tasks">
         </div>
         <div id="blocklist"></div>
     </div>
@@ -61,17 +61,17 @@
             </div>
             <div id="header2"></div>
             <div id="proplist">
-                <p class="inputlabel">Id</p>
-                <input id="taskid" class="form-control inputtext" type="text" />
-                <p class="inputlabel">Description</p><input id="taskdescription" class="form-control inputtext" type="text" />
-                <p class="inputlabel">Enabled</p>
+                <p id="task-id-label" class="inputlabel">Id</p>
+                <input id="taskid" class="form-control inputtext" type="text" autocomplete="off" />
+                <p id="task-desc-label" class="inputlabel">Description</p>
+                <input id="taskdescription" class="form-control inputtext" type="text" autocomplete="off" />
+                <p id="task-enabled-label" class="inputlabel">Enabled</p>
                 <input id="taskenabled" class="inputtext" type="checkbox" checked />
-                <button type="button" class="wf-new-setting btn btn-secondary">New Setting</button>
+                <button id="btn-new-setting" type="button" class="wf-new-setting btn btn-secondary">New Setting</button>
                 <div id="task-settings">
                     <table id="task-settings-table"></table>
                 </div>
             </div>
-            <div id="divisionthing"></div>
         </div>
     </div>
     <div id="wfclose">
@@ -79,33 +79,33 @@
     </div>
     <div id="wfpropwrap">
         <div id="wfproperties">
-            <p id="wfheader2">Workflow Settings <small id="savehelp">Ctrl+S to save.</small></p>
+            <p id="wfheader2"><span id="wf-settings-label">Workflow Settings</span>&nbsp;<small id="savehelp">Ctrl+S to save.</small></p>
             <div id="wfproplist">
-                <p class="inputlabel">Id</p>
-                <input id="wfid" class="form-control inputtext" type="text" />
-                <p class="inputlabel">Name</p>
-                <input id="wfname" class="form-control form-control inputtext" type="text" />
-                <p class="inputlabel">Description</p>
-                <input id="wfdesc" class="form-control inputtext" type="text" />
-                <p class="inputlabel">LaunchType</p>
+                <p id="wfid-label" class="inputlabel">Id</p>
+                <input id="wfid" class="form-control inputtext" type="text" autocomplete="off" />
+                <p id="wfname-label" class="inputlabel">Name</p>
+                <input id="wfname" class="form-control form-control inputtext" type="text" autocomplete="off" />
+                <p id="wfdesc-label" class="inputlabel">Description</p>
+                <input id="wfdesc" class="form-control inputtext" type="text" autocomplete="off" />
+                <p id="wflaunchtype-label" class="inputlabel">LaunchType</p>
                 <select id='wflaunchtype' class="form-control inputtext"><option value=''></option><option value='startup'>Startup</option><option value='trigger'>Trigger</option><option value='periodic'>Periodic</option>><option value='cron'>Cron</option></select>
-                <p class="inputlabel">Period</p>
-                <input id="wfperiod" class="form-control inputtext" type="text" />
-                <p class="inputlabel">Cron Expression</p>
-                <input id="wfcronexp" class="form-control inputtext" type="text" />
-                <p class="inputlabel">Enabled</p>
+                <p id="wfperiod-label" class="inputlabel">Period</p>
+                <input id="wfperiod" class="form-control inputtext" type="text" autocomplete="off" />
+                <p id="wfcronexp-label" class="inputlabel">Cron Expression</p>
+                <input id="wfcronexp" class="form-control inputtext" type="text" autocomplete="off" />
+                <p id="wfenabled-label" class="inputlabel">Enabled</p>
                 <input id='wfenabled' class="inputtext" type='checkbox' checked />
-                <p class="inputlabel">Approval</p>
+                <p id='wfapproval-label' class="inputlabel">Approval</p>
                 <input id='wfapproval' class="inputtext" type='checkbox' />
-                <p class="inputlabel">EnableParallelJobs</p>
+                <p id='wfenablepj-label' class="inputlabel">EnableParallelJobs</p>
                 <input id='wfenablepj' class="inputtext" type='checkbox' checked />
                 <p class="inputlabel">
-                    Local Variables
+                    <span id="wf-local-vars-label">Local Variables</span>
                     <input type="button" id="wf-add-var" value="New Variable" class="btn btn-secondary" />
                 </p>
                 <table class="wf-local-vars"></table>
             </div>
-            <div id="removeblock">Delete Tasks</div>
+            <div id="removeblock"></div>
             <div id="removeworkflow">Delete Workflow</div>
         </div>
     </div>
@@ -146,10 +146,12 @@
     </div>
     <!-- js scripts -->
 
-    <script type="text/javascript" src="js/settings.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/language.js"></script>
 
     <!--<script src="js/jquery.min.js"></script>
     <script src="js/jquery.toast.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/common.js"></script>
     <script src="js/authenticate.js"></script>
     <script src="js/flowy.js"></script>
@@ -159,6 +161,7 @@
     <script src="js/blocks_compressed.js"></script>
     <script src="js/en.js"></script>
     <script src="js/lodash.min.js"></script>
+    <script src="js/language.core.js"></script>
     <script src="js/designer.js"></script>-->
 
     <script src="js/blockly_compressed.js"></script>

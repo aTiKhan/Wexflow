@@ -1,11 +1,14 @@
 # Linux Alpine environment with .NET runtime
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine
 
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
+RUN apk add --no-cache icu-libs
 RUN mkdir /opt/wexflow
 
-# Copy local download of wexflow-5.4-linux-dotnet-core.zip
-# which was pre-downloaded and unzipped from https://github.com/aelassas/Wexflow/releases/download/v5.4/wexflow-5.4-linux-dotnet-core.zip
-COPY wexflow-5.4-linux-dotnet-core/ /opt/wexflow/
+# Copy local download of wexflow-5.7-linux-netcore.zip
+# which was pre-downloaded and unzipped from https://github.com/aelassas/Wexflow/releases/download/v5.7/wexflow-5.7-linux-netcore.zip
+COPY wexflow-5.7-linux-netcore/ /opt/wexflow/
 
 # Instructions below translated from https://github.com/aelassas/Wexflow/wiki/Installation
 

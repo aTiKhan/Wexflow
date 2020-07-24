@@ -2,9 +2,12 @@
     margin: 0px;
     padding: 0px;
     overflow: hidden;
-    background-image: url("../assets/tile.png");
-    background-size: 30px 30px;
-    background-repeat: repeat;
+    /*background-image: url("../assets/tile.png");*/
+    /*background-image: url("../assets/grid.gif");*/
+    /*background-size: 30px 30px;*/
+    /*background-repeat: repeat;*/
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2QwZDBkMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZDBkMGQwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=");
+    background-position: -1px -1px;
     background-color: rgba(0, 0, 0, .015);
     font-family: Helvetica, Arial, sans-serif;
     font-size: 12px;
@@ -41,9 +44,36 @@
         float: right;
     }
 
-    #header #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users, #lnk-profiles {
+    #header #lnk-records, #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users, #lnk-profiles, #lnk-notifications {
         display: none;
     }
+
+/*lang*/
+#lang {
+    margin-top: 10px;
+    margin-right: 20px;
+    color: #000;
+}
+
+#lang .lang{
+    cursor: pointer;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+#lang .lang:hover{
+    opacity:.8;
+}
+
+.dropdown-menu{
+    min-width: 90px;
+}
+
+/*notifications*/
+#lnk-notifications {
+    margin: 0 !important;
+    margin-top: 10px !important;
+}
 
 #navigation, #leftcard, #propwrap, #wfclose, #wfpropwrap, #canvas {
     display: none;
@@ -57,7 +87,7 @@
     box-sizing: border-box;
     position: fixed;
     top: 45px;
-    z-index: 9
+    z-index: 9;
 }
 
 #back {
@@ -1127,5 +1157,5 @@ margin-top: 12px;
 }
 
 .wf-setting-value{
-    width: 285px;
+    width: 265px;
 }

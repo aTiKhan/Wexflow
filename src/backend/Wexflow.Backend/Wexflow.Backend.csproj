@@ -80,6 +80,7 @@
     <Content Include="assets\eye.svg" />
     <Content Include="assets\eyeblue.svg" />
     <Content Include="assets\grabme.svg" />
+    <Content Include="assets\grid.gif" />
     <Content Include="assets\heart.svg" />
     <Content Include="assets\doc.png" />
     <Content Include="assets\log.svg" />
@@ -111,13 +112,20 @@
     <Content Include="css\login.min.css" />
     <Content Include="css\approval.css" />
     <Content Include="css\manager.min.css" />
+    <Content Include="css\notifications.css" />
     <Content Include="css\profiles.css" />
     <Content Include="css\profiles.min.css" />
+    <Content Include="css\records.css" />
     <Content Include="css\users.css" />
     <Content Include="css\users.min.css" />
     <Content Include="designer.html" />
     <Content Include="forgot-password.html" />
+    <Content Include="images\notification-active.png" />
+    <Content Include="images\notification.png" />
+    <Content Include="images\da.png" />
     <Content Include="images\delete.png" />
+    <Content Include="images\en.png" />
+    <Content Include="images\fr.png" />
     <Content Include="images\logo.png" />
     <Content Include="js\ace.js" />
     <Content Include="js\approval.min.js" />
@@ -140,12 +148,16 @@
     <Content Include="js\forgot-password.min.js" />
     <Content Include="js\history.min.js" />
     <Content Include="js\jquery.toast.min.js" />
+    <Content Include="js\language.js" />
+    <Content Include="js\language.core.js" />
     <Content Include="js\lodash.min.js" />
     <Content Include="js\manager.min.js" />
     <Content Include="js\mode-json.js" />
     <Content Include="js\mode-xml.js" />
+    <Content Include="js\notifications.js" />
     <Content Include="js\profiles.js" />
     <Content Include="js\profiles.min.js" />
+    <Content Include="js\records.js" />
     <Content Include="js\theme-ambiance.js" />
     <Content Include="js\theme-chaos.js" />
     <Content Include="js\theme-chrome.js" />
@@ -205,6 +217,10 @@
     <Content Include="js\jBox.all.min.js" />
     <Content Include="js\uglify-designer.bat" />
     <Content Include="css\uglify-designer.bat" />
+    <Content Include="js\uglify-notifications.bat" />
+    <Content Include="js\uglify-records.bat" />
+    <Content Include="css\uglify-notifications.bat" />
+    <Content Include="css\uglify-records.bat" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -262,7 +278,9 @@
     <Content Include="js\worker-json.js" />
     <Content Include="js\worker-xml.js" />
     <Content Include="manager.html" />
+    <Content Include="notifications.html" />
     <Content Include="profiles.html" />
+    <Content Include="records.html" />
     <Content Include="users.html" />
     <Content Include="Web.config" />
   </ItemGroup>

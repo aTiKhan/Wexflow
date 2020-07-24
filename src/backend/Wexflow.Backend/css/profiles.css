@@ -34,9 +34,36 @@
     float: right;
 }
 
-    #header #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users {
+    #header #lnk-records, #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users, #lnk-profiles, #lnk-notifications {
         display: none;
     }
+
+/*lang*/
+#lang {
+    margin-top: 10px;
+    margin-right: 20px;
+    color: #000;
+}
+
+#lang .lang{
+    cursor: pointer;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+#lang .lang:hover{
+    opacity:.8;
+}
+
+.dropdown-menu{
+    min-width: 90px;
+}
+
+/*notifications*/
+#lnk-notifications {
+    margin: 0 !important;
+    margin-top: 10px !important;
+}
 
 #profiles {
     display: none;
@@ -130,7 +157,6 @@
 
 #users-save-action {
     float: right;
-    width: 75px;
     margin-top: 10px;
     margin-right: 10px;
     display: none;

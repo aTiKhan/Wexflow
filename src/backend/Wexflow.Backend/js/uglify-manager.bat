@@ -1,1 +1,1 @@
-uglifyjs jquery.min.js jquery.toast.min.js common.js authenticate.js manager.js -o manager.min.js -c -m
+uglifyjs jquery.min.js jquery.toast.min.js bootstrap.min.js common.js authenticate.js language.core.js manager.js -o manager.min.js -c -m

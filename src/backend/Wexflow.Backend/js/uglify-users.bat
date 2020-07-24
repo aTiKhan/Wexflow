@@ -1,1 +1,1 @@
-uglifyjs jquery.min.js jquery.toast.min.js common.js md5.js authenticate.js users.js -o users.min.js -c -m
+uglifyjs jquery.min.js jquery.toast.min.js bootstrap.min.js common.js md5.js authenticate.js language.core.js users.js -o users.min.js -c -m

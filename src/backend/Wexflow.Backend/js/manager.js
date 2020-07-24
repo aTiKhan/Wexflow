@@ -1,51 +1,123 @@
 ﻿function WexflowManager() {
     "use strict";
 
-    var id = "wf-manager";
-    var uri = Common.trimEnd(Settings.Uri, "/");
-    var lnkManager = document.getElementById("lnk-manager");
-    var lnkDesigner = document.getElementById("lnk-designer");
-    //var lnkEditor = document.getElementById("lnk-editor");
-    //var lnkApproval = document.getElementById("lnk-approval");
-    var lnkUsers = document.getElementById("lnk-users");
-    var lnkProfiles = document.getElementById("lnk-profiles");
-    var selectedId = -1;
-    var workflows = {};
+    let updateLanguage = function (language) {
+        document.getElementById("lnk-records").innerHTML = language.get("lnk-records");
+        document.getElementById("lnk-approval").innerHTML = language.get("lnk-approval");
+
+        document.getElementById("lnk-dashboard").innerHTML = language.get("lnk-dashboard");
+        document.getElementById("lnk-manager").innerHTML = language.get("lnk-manager");
+        document.getElementById("lnk-designer").innerHTML = language.get("lnk-designer");
+        document.getElementById("lnk-history").innerHTML = language.get("lnk-history");
+        document.getElementById("lnk-users").innerHTML = language.get("lnk-users");
+        document.getElementById("lnk-profiles").innerHTML = language.get("lnk-profiles");
+        document.getElementById("spn-logout").innerHTML = language.get("spn-logout");
+
+        if (document.getElementById("wf-start")) {
+            document.getElementById("wf-start").innerHTML = language.get("wf-start");
+        }
+        if (document.getElementById("wf-pause")) {
+            document.getElementById("wf-pause").innerHTML = language.get("wf-pause");
+        }
+        if (document.getElementById("wf-resume")) {
+            document.getElementById("wf-resume").innerHTML = language.get("wf-resume");
+        }
+        if (document.getElementById("wf-stop")) {
+            document.getElementById("wf-stop").innerHTML = language.get("wf-stop");
+        }
+        if (document.getElementById("wf-approve")) {
+            document.getElementById("wf-approve").innerHTML = language.get("wf-approve");
+        }
+        if (document.getElementById("wf-reject")) {
+            document.getElementById("wf-reject").innerHTML = language.get("wf-reject");
+        }
+        if (document.getElementById("wf-search-action")) {
+            document.getElementById("wf-search-action").innerHTML = language.get("btn-search");
+        }
+
+        if (document.getElementById("th-job-id")) {
+            document.getElementById("th-job-id").innerHTML = language.get("th-job-id");
+        }
+        if (document.getElementById("th-job-startedOn")) {
+            document.getElementById("th-job-startedOn").innerHTML = language.get("th-job-startedOn");
+        }
+        if (document.getElementById("th-job-n")) {
+            document.getElementById("th-job-n").innerHTML = language.get("th-wf-n");
+        }
+        if (document.getElementById("th-job-d")) {
+            document.getElementById("th-job-d").innerHTML = language.get("th-wf-d");
+        }
+
+        if (document.getElementById("th-wf-id")) {
+            document.getElementById("th-wf-id").innerHTML = language.get("th-wf-id");
+        }
+        if (document.getElementById("th-wf-n")) {
+            document.getElementById("th-wf-n").innerHTML = language.get("th-wf-n");
+        }
+        if (document.getElementById("th-wf-lt")) {
+            document.getElementById("th-wf-lt").innerHTML = language.get("th-wf-lt");
+        }
+        if (document.getElementById("th-wf-e")) {
+            document.getElementById("th-wf-e").innerHTML = language.get("th-wf-e");
+        }
+        if (document.getElementById("th-wf-a")) {
+            document.getElementById("th-wf-a").innerHTML = language.get("th-wf-a");
+        }
+        if (document.getElementById("th-wf-d")) {
+            document.getElementById("th-wf-d").innerHTML = language.get("th-wf-d");
+        }
+    };
+
+    let language = new Language("lang", updateLanguage);
+    language.init();
+
+    let id = "wf-manager";
+    let uri = Common.trimEnd(Settings.Uri, "/");
+    let lnkRecords = document.getElementById("lnk-records");
+    let lnkManager = document.getElementById("lnk-manager");
+    let lnkDesigner = document.getElementById("lnk-designer");
+    let lnkApproval = document.getElementById("lnk-approval");
+    let lnkUsers = document.getElementById("lnk-users");
+    let lnkProfiles = document.getElementById("lnk-profiles");
+    let lnkNotifications = document.getElementById("lnk-notifications");
+    let imgNotifications = document.getElementById("img-notifications");
+    let selectedId = -1;
+    let workflows = {};
     let jobs = [];
     let workflowJobs = {};
-    var workflowTimer = null;
+    let workflowTimer = null;
     let jobTimer = null;
-    var timerInterval = 1000; // ms
-    var username = "";
-    var password = "";
-    var auth = "";
+    let timerInterval = 1000; // ms
+    let username = "";
+    let password = "";
+    let auth = "";
 
-    var html = "<div id='wf-container'>"
+    let html = "<div id='wf-container'>"
         + "<div id='wf-cmd'>"
-        + "<button id='wf-start' type='button' class='btn btn-primary btn-xs'>Start</button>"
-        + "<button id='wf-pause' type='button' class='btn btn-secondary btn-xs'>Suspend</button>"
-        + "<button id='wf-resume' type='button' class='btn btn-secondary btn-xs'>Resume</button>"
-        + "<button id='wf-stop' type='button' class='btn btn-danger btn-xs'>Stop</button>"
-        + "<button id='wf-approve' type='button' class='btn btn-primary btn-xs'>Approve</button>"
-        + "<button id='wf-reject' type='button' class='btn btn-warning btn-xs'>Reject</button>"
+        + "<button id='wf-start' type='button' class='btn btn-primary btn-xs'>" + language.get("wf-start") + "</button>"
+        + "<button id='wf-pause' type='button' class='btn btn-secondary btn-xs'>" + language.get("wf-pause") + "</button>"
+        + "<button id='wf-resume' type='button' class='btn btn-secondary btn-xs'>" + language.get("wf-resume") + "</button>"
+        + "<button id='wf-stop' type='button' class='btn btn-danger btn-xs'>" + language.get("wf-stop") + "</button>"
+        + "<button id='wf-approve' type='button' class='btn btn-primary btn-xs'>" + language.get("wf-approve") + "</button>"
+        + "<button id='wf-reject' type='button' class='btn btn-warning btn-xs'>" + language.get("wf-reject") + "</button>"
         + "</div>"
         + "<div id='wf-notifier'>"
         + "<input id='wf-notifier-text' type='text' name='fname' readonly>"
         + "</div>"
         + "<div id='wf-search'>"
         + "<div id='wf-search-text-container'>"
-        + "<input id='wf-search-text' type='text' name='fname'>"
+        + "<input id='wf-search-text' type='text' name='fname' autocomplete='off' >"
         + "</div>"
-        + "<button id='wf-search-action' type='button' class='btn btn-primary btn-xs'>Search</button>"
+        + "<button id='wf-search-action' type='button' class='btn btn-primary btn-xs'>" + language.get("btn-search") + "</button>"
         + "</div>"
         + "<div id='wf-jobs'>"
         + "<table id='wf-jobs-table' class='table'>"
         + "<thead class='thead-dark'>"
         + "<tr>"
-        + "<th class='wf-jobId'>Job Id</th>"
-        + "<th class='wf-startedOn'>Started On</th>"
-        + "<th class='wf-n'>Name</th>"
-        + "<th class='wf-d'>Description</th>"
+        + "<th id='th-job-id' class='wf-jobId'>" + language.get("th-job-id") + "</th>"
+        + "<th id='th-job-startedOn' class='wf-startedOn'>" + language.get("th-job-startedOn") + "</th>"
+        + "<th id='th-job-n' class='wf-n'>" + language.get("th-wf-n") + "</th>"
+        + "<th id='th-job-d' class='wf-d'>" + language.get("th-wf-d") + "</th>"
         + "</tr>"
         + "</thead>"
         + "<tbody>"
@@ -58,21 +130,20 @@
 
     document.getElementById(id).innerHTML = html;
 
-    var startButton = document.getElementById("wf-start");
-    var suspendButton = document.getElementById("wf-pause");
-    var resumeButton = document.getElementById("wf-resume");
-    var stopButton = document.getElementById("wf-stop");
-    var approveButton = document.getElementById("wf-approve");
-    var rejectButton = document.getElementById("wf-reject");
-    var searchButton = document.getElementById("wf-search-action");
-    var searchText = document.getElementById("wf-search-text");
-    var suser = getUser();
-
+    let startButton = document.getElementById("wf-start");
+    let suspendButton = document.getElementById("wf-pause");
+    let resumeButton = document.getElementById("wf-resume");
+    let stopButton = document.getElementById("wf-stop");
+    let approveButton = document.getElementById("wf-approve");
+    let rejectButton = document.getElementById("wf-reject");
+    let searchButton = document.getElementById("wf-search-action");
+    let searchText = document.getElementById("wf-search-text");
+    let suser = getUser();
 
     if (suser === null || suser === "") {
         Common.redirectToLoginPage();
     } else {
-        var user = JSON.parse(suser);
+        let user = JSON.parse(suser);
 
         username = user.Username;
         password = user.Password;
@@ -83,50 +154,43 @@
                 if (user.Password !== u.Password) {
                     Common.redirectToLoginPage();
                 } else {
-
                     if (u.UserProfile === 0 || u.UserProfile === 1) {
-                        lnkManager.style.display = "inline";
-                        lnkDesigner.style.display = "inline";
-                        //lnkEditor.style.display = "inline";
-                        //lnkApproval.style.display = "inline";
-                        lnkUsers.style.display = "inline";
+                        Common.get(uri + "/hasNotifications?a=" + encodeURIComponent(user.Username), function (hasNotifications) {
+                            lnkRecords.style.display = "inline";
+                            lnkManager.style.display = "inline";
+                            lnkDesigner.style.display = "inline";
+                            lnkApproval.style.display = "inline";
+                            lnkUsers.style.display = "inline";
+                            lnkNotifications.style.display = "inline";
 
-                        if (u.UserProfile === 0) {
-                            lnkProfiles.style.display = "inline";
-                        }
+                            if (u.UserProfile === 0) {
+                                lnkProfiles.style.display = "inline";
+                            }
 
-                        var btnLogout = document.getElementById("btn-logout");
-                        var divWorkflows = document.getElementById("wf-manager");
-                        divWorkflows.style.display = "block";
+                            if (hasNotifications === true) {
+                                imgNotifications.src = "images/notification-active.png";
+                            } else {
+                                imgNotifications.src = "images/notification.png";
+                            }
 
-                        btnLogout.onclick = function () {
-                            deleteUser();
-                            Common.redirectToLoginPage();
-                        };
-                        btnLogout.innerHTML = "Logout (" + u.Username + ")";
+                            let btnLogout = document.getElementById("btn-logout");
+                            let divWorkflows = document.getElementById("wf-manager");
+                            divWorkflows.style.display = "block";
 
-                        Common.disableButton(startButton, true);
-                        Common.disableButton(suspendButton, true);
-                        Common.disableButton(resumeButton, true);
-                        Common.disableButton(stopButton, true);
-                        Common.disableButton(approveButton, true);
-                        Common.disableButton(rejectButton, true);
+                            btnLogout.onclick = function () {
+                                deleteUser();
+                                Common.redirectToLoginPage();
+                            };
+                            document.getElementById("spn-username").innerHTML = " (" + u.Username + ")";
 
-                        searchButton.onclick = function () {
-                            loadWorkflows();
-                            notify("");
                             Common.disableButton(startButton, true);
                             Common.disableButton(suspendButton, true);
                             Common.disableButton(resumeButton, true);
                             Common.disableButton(stopButton, true);
                             Common.disableButton(approveButton, true);
                             Common.disableButton(rejectButton, true);
-                        };
 
-                        searchText.onkeyup = function (event) {
-                            event.preventDefault();
-
-                            if (event.keyCode === 13) { // Enter
+                            searchButton.onclick = function () {
                                 loadWorkflows();
                                 notify("");
                                 Common.disableButton(startButton, true);
@@ -135,17 +199,32 @@
                                 Common.disableButton(stopButton, true);
                                 Common.disableButton(approveButton, true);
                                 Common.disableButton(rejectButton, true);
-                            }
-                        };
+                            };
 
-                        loadWorkflows();
+                            searchText.onkeyup = function (event) {
+                                event.preventDefault();
+
+                                if (event.keyCode === 13) { // Enter
+                                    loadWorkflows();
+                                    notify("");
+                                    Common.disableButton(startButton, true);
+                                    Common.disableButton(suspendButton, true);
+                                    Common.disableButton(resumeButton, true);
+                                    Common.disableButton(stopButton, true);
+                                    Common.disableButton(approveButton, true);
+                                    Common.disableButton(rejectButton, true);
+                                }
+                            };
+
+                            loadWorkflows();
+
+                        }, function () { }, auth);
                     } else {
                         Common.redirectToLoginPage();
                     }
 
                 }
-            },
-            function () { }, auth);
+            }, function () { }, auth);
     }
 
     function compareById(wf1, wf2) {
@@ -176,12 +255,12 @@
         Common.get(uri + "/search?s=" + encodeURIComponent(searchText.value),
             function (data) {
                 data.sort(compareById);
-                var items = [];
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    var val = data[i];
+                let items = [];
+
+                for (let i = 0; i < data.length; i++) {
+                    let val = data[i];
                     workflows[val.Id] = val;
-                    var lt = launchType(val.LaunchType);
+                    let lt = launchType(val.LaunchType);
                     items.push("<tr>"
                         + "<td class='wf-id' title='" + val.Id + "'>" + val.Id + "</td>"
                         + "<td class='wf-n' title='" + val.Name + "'>" + val.Name + "</td>"
@@ -193,15 +272,15 @@
 
                 }
 
-                var table = "<table id='wf-workflows-table' class='table'>"
+                let table = "<table id='wf-workflows-table' class='table'>"
                     + "<thead class='thead-dark'>"
                     + "<tr>"
-                    + "<th class='wf-id'>Id</th>"
-                    + "<th class='wf-n'>Name</th>"
-                    + "<th class='wf-lt'>LaunchType</th>"
-                    + "<th class='wf-e'>Enabled</th>"
-                    + "<th class='wf-a'>Approval</th>"
-                    + "<th class='wf-d'>Description</th>"
+                    + "<th id='th-wf-id' class='wf-id'>" + language.get("th-wf-id") + "</th>"
+                    + "<th id='th-wf-n' class='wf-n'>" + language.get("th-wf-n") + "</th>"
+                    + "<th id='th-wf-lt' class='wf-lt'>" + language.get("th-wf-lt") + "</th>"
+                    + "<th id='th-wf-e' class='wf-e'>" + language.get("th-wf-e") + "</th>"
+                    + "<th id='th-wf-a' class='wf-a'>" + language.get("th-wf-a") + "</th>"
+                    + "<th id='th-wf-d' class='wf-d'>" + language.get("th-wf-d") + "</th>"
                     + "</tr>"
                     + "</thead>"
                     + "<tbody>"
@@ -212,13 +291,13 @@
                 let divWorkflows = document.getElementById("wf-workflows");
                 divWorkflows.innerHTML = table;
 
-                var workflowsTable = document.getElementById("wf-workflows-table");
+                let workflowsTable = document.getElementById("wf-workflows-table");
 
                 workflowsTable.getElementsByTagName("tbody")[0].style.height = (divWorkflows.offsetHeight - 45) + "px";
 
-                var rows = workflowsTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+                let rows = workflowsTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
                 if (rows.length > 0) {
-                    var hrow = workflowsTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+                    let hrow = workflowsTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
                     hrow.querySelector(".wf-id").style.width = rows[0].querySelector(".wf-id").offsetWidth + "px";
                     hrow.querySelector(".wf-n").style.width = rows[0].querySelector(".wf-n").offsetWidth + "px";
                     hrow.querySelector(".wf-e").style.width = rows[0].querySelector(".wf-e").offsetWidth + "px";
@@ -226,9 +305,9 @@
                     hrow.querySelector(".wf-d").style.width = rows[0].querySelector(".wf-d").offsetWidth + "px";
                 }
 
-                var descriptions = workflowsTable.querySelectorAll(".wf-d");
-                for (i = 0; i < descriptions.length; i++) {
-                    descriptions[i].style.width = workflowsTable.offsetWidth - 515 + "px";
+                let descriptions = workflowsTable.querySelectorAll(".wf-d");
+                for (let i = 0; i < descriptions.length; i++) {
+                    descriptions[i].style.width = workflowsTable.offsetWidth - 495 + "px";
                 }
 
                 function getWorkflow(wid, func) {
@@ -261,7 +340,7 @@
                 }
 
                 function workflowStatusChanged(workflow) {
-                    var changed = workflows[workflow.Id].IsEnabled !== workflow.IsEnabled;
+                    let changed = workflows[workflow.Id].IsEnabled !== workflow.IsEnabled;
                     workflows[workflow.Id].IsEnabled = workflow.IsEnabled;
                     return changed;
                 }
@@ -303,19 +382,18 @@
                     if (!job || !workflowJobs[job.InstanceId]) {
                         return true;
                     }
-                    var changed = workflowJobs[job.InstanceId].IsRunning !== job.IsRunning || workflowJobs[job.InstanceId].IsPaused !== job.IsPaused || workflowJobs[job.InstanceId].IsWaitingForApproval !== job.IsWaitingForApproval;
+                    let changed = workflowJobs[job.InstanceId].IsRunning !== job.IsRunning || workflowJobs[job.InstanceId].IsPaused !== job.IsPaused || workflowJobs[job.InstanceId].IsWaitingForApproval !== job.IsWaitingForApproval;
                     workflowJobs[job.InstanceId].IsRunning = job.IsRunning;
                     workflowJobs[job.InstanceId].IsPaused = job.IsPaused;
                     workflowJobs[job.InstanceId].IsWaitingForApproval = job.IsWaitingForApproval;
                     return changed;
                 }
 
-                var rows = (workflowsTable.getElementsByTagName("tbody")[0]).getElementsByTagName("tr");
-                for (i = 0; i < rows.length; i++) {
+                for (let i = 0; i < rows.length; i++) {
                     rows[i].onclick = function () {
                         selectedId = parseInt(this.getElementsByClassName("wf-id")[0].innerHTML);
 
-                        var selected = workflowsTable.querySelectorAll(".selected");
+                        let selected = workflowsTable.querySelectorAll(".selected");
                         if (selected.length > 0) {
                             selected[0].classList.remove("selected");
                         }
@@ -347,15 +425,15 @@
 
                                             if (jobs.includes(jobId) === false) {
                                                 // Add
-                                                var row = jobsTable.getElementsByTagName('tbody')[0].insertRow();
+                                                let row = jobsTable.getElementsByTagName('tbody')[0].insertRow();
 
                                                 for (let i = 0; i < data.length; i++) {
-                                                    var job = data[i];
+                                                    let job = data[i];
                                                     if (job.InstanceId === jobId) {
-                                                        var cell1 = row.insertCell(0);
-                                                        var cell2 = row.insertCell(1);
-                                                        var cell3 = row.insertCell(2);
-                                                        var cell4 = row.insertCell(3);
+                                                        let cell1 = row.insertCell(0);
+                                                        let cell2 = row.insertCell(1);
+                                                        let cell3 = row.insertCell(2);
+                                                        let cell4 = row.insertCell(3);
                                                         cell1.className = "wf-jobId";
                                                         cell1.innerHTML = job.InstanceId;
                                                         cell2.className = "wf-startedOn";
@@ -370,7 +448,7 @@
 
                                                 //let rows = (jobsTable.getElementsByTagName("tbody")[0]).getElementsByTagName("tr");
                                                 //if (rows.length > 0) {
-                                                //    var hrow = jobsTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+                                                //    let hrow = jobsTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
                                                 //    hrow.querySelector(".wf-jobId").style.width = rows[0].querySelector(".wf-jobId").offsetWidth + "px";
                                                 //    hrow.querySelector(".wf-startedOn").style.width = rows[0].querySelector(".wf-startedOn").offsetWidth + "px";
                                                 //    hrow.querySelector(".wf-n").style.width = rows[0].querySelector(".wf-n").offsetWidth + "px";
@@ -399,7 +477,7 @@
                                                         }
 
                                                         //if (rows.length > 0) {
-                                                        //    var hrow = jobsTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+                                                        //    let hrow = jobsTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
                                                         //    hrow.querySelector(".wf-jobId").style.width = rows[0].querySelector(".wf-jobId").offsetWidth + "px";
                                                         //    hrow.querySelector(".wf-startedOn").style.width = rows[0].querySelector(".wf-startedOn").offsetWidth + "px";
                                                         //    hrow.querySelector(".wf-n").style.width = rows[0].querySelector(".wf-n").offsetWidth + "px";
@@ -464,7 +542,7 @@
                 }
 
                 startButton.onclick = function () {
-                    var startUri = uri + "/start?w=" + selectedId;
+                    let startUri = uri + "/start?w=" + selectedId;
                     Common.post(startUri, function (res) {
                     }, function () { }, "", auth);
                 };
@@ -473,12 +551,12 @@
                     let selectedJob = document.getElementById("wf-jobs-table").querySelector(".selected");
                     let jobId = selectedJob.querySelector(".wf-jobId").innerHTML;
 
-                    var suspendUri = uri + "/suspend?w=" + selectedId + "&i=" + jobId;
+                    let suspendUri = uri + "/suspend?w=" + selectedId + "&i=" + jobId;
                     Common.post(suspendUri, function (res) {
                         if (res === true) {
                             updateJobButtons(selectedId, jobId, true);
                         } else {
-                            Common.toastInfo("This operation is not supported.");
+                            Common.toastInfo(language.get("op-not-supported"));
                         }
                     }, function () { }, "", auth);
                 };
@@ -487,7 +565,7 @@
                     let selectedJob = document.getElementById("wf-jobs-table").querySelector(".selected");
                     let jobId = selectedJob.querySelector(".wf-jobId").innerHTML;
 
-                    var resumeUri = uri + "/resume?w=" + selectedId + "&i=" + jobId;
+                    let resumeUri = uri + "/resume?w=" + selectedId + "&i=" + jobId;
                     Common.post(resumeUri, function () {
                         updateJobButtons(selectedId, jobId, true);
                     }, function () { }, "", auth);
@@ -497,13 +575,13 @@
                     let selectedJob = document.getElementById("wf-jobs-table").querySelector(".selected");
                     let jobId = selectedJob.querySelector(".wf-jobId").innerHTML;
 
-                    var stopUri = uri + "/stop?w=" + selectedId + "&i=" + jobId;
+                    let stopUri = uri + "/stop?w=" + selectedId + "&i=" + jobId;
                     Common.post(stopUri,
                         function (res) {
                             if (res === true) {
                                 updateJobButtons(selectedId, jobId, true);
                             } else {
-                                Common.toastInfo("This operation is not supported.");
+                                Common.toastInfo(language.get("op-not-supported"));
                             }
                         },
                         function () { }, "", auth);
@@ -519,11 +597,11 @@
                         function (res) {
                             if (res === true) {
                                 updateJobButtons(selectedId, jobId, true);
-                                Common.toastSuccess("The job " + jobId + " was approved.");
+                                Common.toastSuccess(language.get("job-part-1") + jobId + language.get("job-approved"));
                             } else {
                                 Common.disableButton(approveButton, false);
                                 Common.disableButton(stopButton, false);
-                                Common.toastError("An error occured while approving the job " + jobId + " of the workflow " + selectedId + ".");
+                                Common.toastError(language.get("job-approved-error-part-1") + jobId + language.get("job-approved-error-part-2") + selectedId + ".");
                             }
                         },
                         function () { }, "", auth);
@@ -540,12 +618,12 @@
                         function (res) {
                             if (res === true) {
                                 updateJobButtons(selectedId, jobId, true);
-                                Common.toastSuccess("The job " + jobId + " was rejected.");
+                                Common.toastSuccess(language.get("job-part-1") + jobId + language.get("job-rejected"));
                             } else {
                                 Common.disableButton(disapproveButton, true);
                                 Common.disableButton(approveButton, false);
                                 Common.disableButton(stopButton, false);
-                                Common.toastError("An error occured while rejecting the job " + jobId + " of the workflow " + selectedId + ".");
+                                Common.toastError(language.get("job-rejected-error-part-1") + jobId + language.get("job-approved-error-part-2") + selectedId + ".");
                             }
                         },
                         function () { }, "", auth);
@@ -554,7 +632,7 @@
                 // End of get workflows
             },
             function () {
-                Common.toastError("An error occured while retrieving workflows. Check that Wexflow server is running correctly.");
+                Common.toastError(language.get("workflows-server-error"));
             }, auth);
     }
 

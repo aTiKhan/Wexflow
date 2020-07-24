@@ -1,34 +1,75 @@
 ﻿function Profiles() {
     "use strict";
 
-    var uri = Common.trimEnd(Settings.Uri, "/");
-    var lnkManager = document.getElementById("lnk-manager");
-    var lnkDesigner = document.getElementById("lnk-designer");
-    //var lnkEditor = document.getElementById("lnk-editor");
-    //var lnkApproval = document.getElementById("lnk-approval");
-    var lnkUsers = document.getElementById("lnk-users");
-    var lnkProfiles = document.getElementById("lnk-profiles");
-    var divProfiles = document.getElementById("profiles");
-    var btnLogout = document.getElementById("btn-logout");
-    var txtSearch = document.getElementById("users-search-text");
-    var divUsersTable = document.getElementById("users-table");
-    var btnSearch = document.getElementById("users-search-action");
-    var divWorkflows = document.getElementById("workflows");
-    var btnSave = document.getElementById("users-save-action");
-    var suser = getUser();
-    var uo = 0;
-    var selectedUserId = "";
-    var selectedUsername = "";
-    var workflows = [];
-    var userWorkflows = [];    // [{"UserId": 1, "WorkflowId": 6}, ...]
-    var username = "";
-    var password = "";
-    var auth = "";
+    let updateLanguage = function (language) {
+        document.getElementById("lnk-records").innerHTML = language.get("lnk-records");
+        document.getElementById("lnk-approval").innerHTML = language.get("lnk-approval");
+
+        document.getElementById("lnk-dashboard").innerHTML = language.get("lnk-dashboard");
+        document.getElementById("lnk-manager").innerHTML = language.get("lnk-manager");
+        document.getElementById("lnk-designer").innerHTML = language.get("lnk-designer");
+        document.getElementById("lnk-history").innerHTML = language.get("lnk-history");
+        document.getElementById("lnk-users").innerHTML = language.get("lnk-users");
+        document.getElementById("lnk-profiles").innerHTML = language.get("lnk-profiles");
+        document.getElementById("spn-logout").innerHTML = language.get("spn-logout");
+
+        document.getElementById("users-search-action").value = language.get("btn-search");
+        document.getElementById("users-save-action").value = language.get("save-action");
+
+        if (document.getElementById("th-wf-id")) {
+            document.getElementById("th-wf-id").innerHTML = language.get("th-wf-id");
+        }
+        if (document.getElementById("th-wf-n")) {
+            document.getElementById("th-wf-n").innerHTML = language.get("th-wf-n");
+        }
+        if (document.getElementById("th-wf-lt")) {
+            document.getElementById("th-wf-lt").innerHTML = language.get("th-wf-lt");
+        }
+        if (document.getElementById("th-wf-e")) {
+            document.getElementById("th-wf-e").innerHTML = language.get("th-wf-e");
+        }
+        if (document.getElementById("th-wf-a")) {
+            document.getElementById("th-wf-a").innerHTML = language.get("th-wf-a");
+        }
+        if (document.getElementById("th-wf-d")) {
+            document.getElementById("th-wf-d").innerHTML = language.get("th-wf-d");
+        }
+    };
+
+    let language = new Language("lang", updateLanguage);
+    language.init();
+
+    let uri = Common.trimEnd(Settings.Uri, "/");
+    let lnkRecords = document.getElementById("lnk-records");
+    let lnkManager = document.getElementById("lnk-manager");
+    let lnkDesigner = document.getElementById("lnk-designer");
+    let lnkApproval = document.getElementById("lnk-approval");
+    let lnkUsers = document.getElementById("lnk-users");
+    let lnkProfiles = document.getElementById("lnk-profiles");
+    let lnkNotifications = document.getElementById("lnk-notifications");
+    let imgNotifications = document.getElementById("img-notifications");
+
+    let divProfiles = document.getElementById("profiles");
+    let btnLogout = document.getElementById("btn-logout");
+    let txtSearch = document.getElementById("users-search-text");
+    let divUsersTable = document.getElementById("users-table");
+    let btnSearch = document.getElementById("users-search-action");
+    let divWorkflows = document.getElementById("workflows");
+    let btnSave = document.getElementById("users-save-action");
+    let suser = getUser();
+    let uo = 0;
+    let selectedUserId = "";
+    let selectedUsername = "";
+    let workflows = [];
+    let userWorkflows = [];    // [{"UserId": 1, "WorkflowId": 6}, ...]
+    let username = "";
+    let password = "";
+    let auth = "";
 
     if (suser === null || suser === "") {
         Common.redirectToLoginPage();
     } else {
-        var user = JSON.parse(suser);
+        let user = JSON.parse(suser);
 
         username = user.Username;
         password = user.Password;
@@ -39,29 +80,36 @@
                 if (user.Password !== u.Password) {
                     Common.redirectToLoginPage();
                 } else if (u.UserProfile === 0) {
-                    divProfiles.style.display = "block";
-                    lnkManager.style.display = "inline";
-                    lnkDesigner.style.display = "inline";
-                    //lnkEditor.style.display = "inline";
-                    //lnkApproval.style.display = "inline";
-                    lnkUsers.style.display = "inline";
-                    lnkProfiles.style.display = "inline";
+                    Common.get(uri + "/hasNotifications?a=" + encodeURIComponent(user.Username), function (hasNotifications) {
+                        divProfiles.style.display = "block";
+                        lnkRecords.style.display = "inline";
+                        lnkManager.style.display = "inline";
+                        lnkDesigner.style.display = "inline";
+                        lnkApproval.style.display = "inline";
+                        lnkUsers.style.display = "inline";
+                        lnkProfiles.style.display = "inline";
+                        lnkNotifications.style.display = "inline";
 
-                    btnLogout.innerHTML = "Logout (" + u.Username + ")";
+                        document.getElementById("spn-username").innerHTML = " (" + u.Username + ")";
 
-                    btnLogout.onclick = function () {
-                        deleteUser();
-                        Common.redirectToLoginPage();
-                    };
+                        if (hasNotifications === true) {
+                            imgNotifications.src = "images/notification-active.png";
+                        } else {
+                            imgNotifications.src = "images/notification.png";
+                        }
 
-                    loadUsers();
+                        btnLogout.onclick = function () {
+                            deleteUser();
+                            Common.redirectToLoginPage();
+                        };
 
+                        loadUsers();
+                    }, function () { }, auth);
                 } else {
                     Common.redirectToLoginPage();
                 }
 
-            },
-            function () { }, auth);
+            }, function () { }, auth);
     }
 
     btnSearch.onclick = function () {
@@ -78,10 +126,10 @@
         Common.get(uri + "/searchAdmins?keyword=" + encodeURIComponent(txtSearch.value) + "&uo=" + uo,
             function (data) {
 
-                var items = [];
-                for (var i = 0; i < data.length; i++) {
-                    var val = data[i];
-                    var tr;
+                let items = [];
+                for (let i = 0; i < data.length; i++) {
+                    let val = data[i];
+                    let tr;
 
                     if (usernameToSelect === val.Username) {
                         tr = "<tr class='selected'>";
@@ -98,7 +146,7 @@
                     );
                 }
 
-                var table = "<table id='wf-users-table' class='table'>"
+                let table = "<table id='wf-users-table' class='table'>"
                     + "<thead class='thead-dark'>"
                     + "<tr>"
                     + "<th id='th-id'>Id</th>"
@@ -112,22 +160,22 @@
                     + "</table>";
 
                 divUsersTable.innerHTML = table;
-                var usersTable = document.getElementById("wf-users-table");
+                let usersTable = document.getElementById("wf-users-table");
 
                 usersTable.getElementsByTagName("tbody")[0].style.height = (divUsersTable.offsetHeight - 35) + "px";
 
-                var rows = usersTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+                let rows = usersTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
                 if (rows.length > 0) {
-                    var hrow = usersTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+                    let hrow = usersTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
                     hrow.querySelector(".username").style.width = rows[0].querySelector(".username").offsetWidth + "px";
                 }
 
-                var usernames = usersTable.querySelectorAll(".username");
-                for (i = 0; i < usernames.length; i++) {
+                let usernames = usersTable.querySelectorAll(".username");
+                for (let i = 0; i < usernames.length; i++) {
                     usernames[i].style.width = usersTable.offsetWidth + "px";
                 }
 
-                var thUsername = document.getElementById("th-username");
+                let thUsername = document.getElementById("th-username");
                 thUsername.onclick = function () {
                     if (uo === 0) {
                         uo = 1;
@@ -143,14 +191,14 @@
                     thUsername.innerHTML = "Username&nbsp;&nbsp;🔻";
                 }
 
-                for (var j = 0; j < rows.length; j++) {
+                for (let j = 0; j < rows.length; j++) {
 
-                    var row = rows[j];
+                    let row = rows[j];
                     if (scroll === true) {
-                        var userIdTd = row.getElementsByClassName("userid")[0];
+                        let userIdTd = row.getElementsByClassName("userid")[0];
 
                         if (typeof userIdTd !== "undefined" && userIdTd !== null) {
-                            var userId = userIdTd.innerHTML;
+                            let userId = userIdTd.innerHTML;
                             if (userId === selectedUserId) {
                                 row.scrollIntoView(true);
                             }
@@ -159,16 +207,16 @@
                     }
 
                     row.onclick = function () {
-                        var selected = document.getElementsByClassName("selected");
+                        let selected = document.getElementsByClassName("selected");
                         if (selected.length > 0) {
-                            var selectedTr = selected[0];
+                            let selectedTr = selected[0];
                             selectedTr.className = selectedTr.className.replace("selected", "");
                         }
 
                         this.className += "selected";
 
                         selectedUserId = this.getElementsByClassName("userid")[0].innerHTML;
-                        var selectedUsernameTd = this.getElementsByClassName("username")[0];
+                        let selectedUsernameTd = this.getElementsByClassName("username")[0];
                         selectedUsername = selectedUsernameTd.innerHTML;
 
                         userWorkflows = [];
@@ -186,12 +234,12 @@
                 btnSave.style.display = "block";
 
                 data.sort(compareById);
-                var items = [];
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    var val = data[i];
+                let items = [];
+
+                for (let i = 0; i < data.length; i++) {
+                    let val = data[i];
                     workflows[val.Id] = val;
-                    var lt = launchType(val.LaunchType);
+                    let lt = launchType(val.LaunchType);
                     items.push("<tr>"
                         + "<td class='wf-check'><input type='checkbox'></td>"
                         + "<td class='wf-id' title='" + val.Id + "'>" + val.Id + "</td>"
@@ -204,16 +252,16 @@
 
                 }
 
-                var table = "<table id='wf-workflows-table' class='table'>"
+                let table = "<table id='wf-workflows-table' class='table'>"
                     + "<thead class='thead-dark'>"
                     + "<tr>"
                     + "<th><input id='check-all' type='checkbox'></th>"
-                    + "<th class='wf-id'>Id</th>"
-                    + "<th class='wf-n'>Name</th>"
-                    + "<th class='wf-lt'>LaunchType</th>"
-                    + "<th class='wf-e'>Enabled</th>"
-                    + "<th class='wf-a'>Approval</th>"
-                    + "<th class='wf-d'>Description</th>"
+                    + "<th id='th-wf-id' class='wf-id'>" + language.get("th-wf-id") + "</th>"
+                    + "<th id='th-wf-n' class='wf-n'>" + language.get("th-wf-n") + "</th>"
+                    + "<th id='th-wf-lt' class='wf-lt'>" + language.get("th-wf-lt") + "</th>"
+                    + "<th id='th-wf-e' class='wf-e'>" + language.get("th-wf-e") + "</th>"
+                    + "<th id='th-wf-a' class='wf-a'>" + language.get("th-wf-a") + "</th>"
+                    + "<th id='th-wf-d' class='wf-d'>" + language.get("th-wf-d") + "</th>"
                     + "</tr>"
                     + "</thead>"
                     + "<tbody>"
@@ -223,28 +271,28 @@
 
                 divWorkflows.innerHTML = table;
 
-                var workflowsTable = document.getElementById("wf-workflows-table");
+                let workflowsTable = document.getElementById("wf-workflows-table");
 
                 workflowsTable.getElementsByTagName("tbody")[0].style.height = (divWorkflows.offsetHeight - 45) + "px";
 
-                var descriptions = workflowsTable.querySelectorAll(".wf-d");
-                for (i = 0; i < descriptions.length; i++) {
+                let descriptions = workflowsTable.querySelectorAll(".wf-d");
+                for (let i = 0; i < descriptions.length; i++) {
                     descriptions[i].style.width = workflowsTable.offsetWidth - 515 + "px";
                 }
 
-                var enabledFields = workflowsTable.querySelectorAll(".wf-e");
-                for (i = 0; i < enabledFields.length; i++) {
+                let enabledFields = workflowsTable.querySelectorAll(".wf-e");
+                for (let i = 0; i < enabledFields.length; i++) {
                     enabledFields[i].style.width = 75 + "px";
                 }
 
-                var approvalFields = workflowsTable.querySelectorAll(".wf-a");
-                for (i = 0; i < approvalFields.length; i++) {
+                let approvalFields = workflowsTable.querySelectorAll(".wf-a");
+                for (let i = 0; i < approvalFields.length; i++) {
                     approvalFields[i].style.width = 75 + "px";
                 }
 
-                var rows = workflowsTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+                let rows = workflowsTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
                 if (rows.length > 0) {
-                    var hrow = workflowsTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
+                    let hrow = workflowsTable.getElementsByTagName("thead")[0].getElementsByTagName("tr")[0];
                     hrow.querySelector(".wf-id").style.width = rows[0].querySelector(".wf-id").offsetWidth + "px";
                     hrow.querySelector(".wf-n").style.width = rows[0].querySelector(".wf-n").offsetWidth + "px";
                     hrow.querySelector(".wf-e").style.width = rows[0].querySelector(".wf-e").offsetWidth + "px";
@@ -252,20 +300,20 @@
                     hrow.querySelector(".wf-d").style.width = rows[0].querySelector(".wf-d").offsetWidth + "px";
                 }
 
-                for (i = 0; i < rows.length; i++) {
-                    var row = rows[i];
-                    var checkBox = row.getElementsByClassName("wf-check")[0].firstChild;
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+                    let checkBox = row.getElementsByClassName("wf-check")[0].firstChild;
 
                     checkBox.onchange = function () {
-                        var currentRow = this.parentElement.parentElement;
-                        var workflowId = parseInt(currentRow.getElementsByClassName("wf-id")[0].innerHTML);
-                        var workflowDbId = workflows[workflowId].DbId;
+                        let currentRow = this.parentElement.parentElement;
+                        let workflowId = parseInt(currentRow.getElementsByClassName("wf-id")[0].innerHTML);
+                        let workflowDbId = workflows[workflowId].DbId;
 
                         if (this.checked === true) {
                             userWorkflows.push({ "UserId": selectedUserId, "WorkflowId": workflowDbId });
                         } else {
-                            //var index = -1;
-                            for (var j = userWorkflows.length - 1; j > -1; j--) {
+                            //let index = -1;
+                            for (let j = userWorkflows.length - 1; j > -1; j--) {
                                 if (userWorkflows[j].WorkflowId === workflowDbId) {
                                     //index = j;
                                     //break;
@@ -285,15 +333,15 @@
                 Common.get(uri + "/userWorkflows?u=" + selectedUserId,
                     function (res) {
 
-                        var workflowsTable = document.getElementById("wf-workflows-table");
-                        var rows = (workflowsTable.getElementsByTagName("tbody")[0]).getElementsByTagName("tr");
-                        for (var i = 0; i < rows.length; i++) {
-                            var row = rows[i];
-                            var checkBox = row.getElementsByClassName("wf-check")[0].firstChild;
-                            var workflowId = parseInt(row.getElementsByClassName("wf-id")[0].innerHTML);
-                            var workflowDbId = workflows[workflowId].DbId;
+                        let workflowsTable = document.getElementById("wf-workflows-table");
+                        let rows = (workflowsTable.getElementsByTagName("tbody")[0]).getElementsByTagName("tr");
+                        for (let i = 0; i < rows.length; i++) {
+                            let row = rows[i];
+                            let checkBox = row.getElementsByClassName("wf-check")[0].firstChild;
+                            let workflowId = parseInt(row.getElementsByClassName("wf-id")[0].innerHTML);
+                            let workflowDbId = workflows[workflowId].DbId;
 
-                            for (var j = 0; j < res.length; j++) {
+                            for (let j = 0; j < res.length; j++) {
                                 if (workflowDbId === res[j].DbId) {
                                     checkBox.checked = true;
                                     //console.log(workflowDbId);
@@ -307,19 +355,19 @@
                     }, auth);
 
                 document.getElementById("check-all").onchange = function () {
-                    var workflowsTable = document.getElementById("wf-workflows-table");
-                    var rows = (workflowsTable.getElementsByTagName("tbody")[0]).getElementsByTagName("tr");
-                    for (var i = 0; i < rows.length; i++) {
-                        var row = rows[i];
-                        var checkBox = row.getElementsByClassName("wf-check")[0].firstChild;
-                        var workflowId = parseInt(row.getElementsByClassName("wf-id")[0].innerHTML);
-                        var workflowDbId = workflows[workflowId].DbId;
+                    let workflowsTable = document.getElementById("wf-workflows-table");
+                    let rows = (workflowsTable.getElementsByTagName("tbody")[0]).getElementsByTagName("tr");
+                    for (let i = 0; i < rows.length; i++) {
+                        let row = rows[i];
+                        let checkBox = row.getElementsByClassName("wf-check")[0].firstChild;
+                        let workflowId = parseInt(row.getElementsByClassName("wf-id")[0].innerHTML);
+                        let workflowDbId = workflows[workflowId].DbId;
 
                         if (checkBox.checked === true) {
                             checkBox.checked = false;
 
-                            //var index = -1;
-                            for (var j = userWorkflows.length - 1; j > -1; j--) {
+                            //let index = -1;
+                            for (let j = userWorkflows.length - 1; j > -1; j--) {
                                 if (userWorkflows[j].WorkflowId === workflowDbId) {
                                     //index = j;
                                     //break;

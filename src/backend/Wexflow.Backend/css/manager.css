@@ -35,10 +35,36 @@
         float: right;
     }
 
-    #header #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users, #lnk-profiles {
+    #header #lnk-records, #lnk-manager, #lnk-designer, #lnk-editor, #lnk-approval, #lnk-users, #lnk-profiles, #lnk-notifications {
         display: none;
     }
 
+/*lang*/
+#lang {
+    margin-top: 10px;
+    margin-right: 20px;
+    color: #000;
+}
+
+#lang .lang{
+    cursor: pointer;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+#lang .lang:hover{
+    opacity:.8;
+}
+
+.dropdown-menu{
+    min-width: 90px;
+}
+
+/*notifications*/
+#lnk-notifications {
+    margin: 0 !important;
+    margin-top: 10px !important;
+}
 
 #wf-manager{
 	position: absolute; 
@@ -91,7 +117,7 @@
 
     #wf-search #wf-search-text-container {
         position: absolute;
-        right: 75px;
+        right: 79px;
         left: 0;
     }
         #wf-search #wf-search-text-container #wf-search-text {
@@ -101,7 +127,7 @@
     #wf-search #wf-search-action {
         position: absolute;
         right: 0px;
-        width: 70px;
+        width: 74px;
     }
 
 /* workflows */
